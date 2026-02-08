@@ -11,7 +11,7 @@ body {
   opacity: 0.35;
 }
 
-.glow-teal { text-shadow: 0 0 24px rgba(0,242,255,0.45); }
+.glow-teal { text-shadow: 0 0 14px rgba(0,242,255,0.32); }
 
 .terminal-box, .terminal-panel {
   border: 1px solid rgba(0,242,255,0.35);

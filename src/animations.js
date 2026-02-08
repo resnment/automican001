@@ -5,7 +5,7 @@ export function initAnimations() {
   const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
   intro
     .from("#hero h1", { y: 36, opacity: 0, duration: 1.1 })
-    .from("#typewriter", { opacity: 0, filter: "blur(8px)", duration: 0.8 }, "-=0.5")
+    .from("#typewriter", { opacity: 0, y: 10, duration: 0.6 }, "-=0.45")
     .from(".btn-neon, .btn-ghost", {
       y: 12,
       opacity: 0,
@@ -14,8 +14,8 @@ export function initAnimations() {
     }, "-=0.35")
     .from("#automican-core-canvas", {
       opacity: 0,
-      scale: 0.9,
-      duration: 1.2
+      scale: 0.96,
+      duration: 0.9
     }, "-=1.0");
 
   // Glitch-style reveal for sections
