@@ -125,31 +125,6 @@ const INITIAL_LOGS = [
 
 // --- Components ---
 
-const TypingText = ({ text, delay = 50 }) => {
-  const [displayedText, setDisplayedText] = useState('');
-
-  useEffect(() => {
-    let i = 0;
-    setDisplayedText('');
-    const timer = setInterval(() => {
-      if (i < text.length) {
-        setDisplayedText((prev) => prev + text.charAt(i));
-        i++;
-      } else {
-        clearInterval(timer);
-      }
-    }, delay);
-    return () => clearInterval(timer);
-  }, [text, delay]);
-
-  return (
-    <span>
-      {displayedText}
-      <span className="animate-pulse">_</span>
-    </span>
-  );
-};
-
 const ConceptCard = ({ title, desc, icon: Icon }) => (
   <div className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-6 rounded-xl hover:border-cyan-500/40 transition-all duration-300 group">
     <div className="flex items-center gap-3 mb-3">
@@ -242,10 +217,7 @@ export default function App() {
           <span>Rising to Sync Mankind</span>
         </h1>
         <p className="text-lg text-slate-400 font-mono min-h-[3rem]">
-          <TypingText
-            text={"AI Agent — a sovereign, autonomous network that thinks, collaborates, and executes across your entire operation — 24/7."}
-            delay={30}
-          />
+          AI Agent — a sovereign, autonomous network that thinks, collaborates, and executes across your entire operation — 24/7.
         </p>
       </header>
 
