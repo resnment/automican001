@@ -243,7 +243,7 @@ export default function App() {
         </h1>
         <p className="text-lg text-slate-400 font-mono min-h-[3rem]">
           <TypingText
-            text={"AI Agents — a sovereign network, autonomous by design, built to think, collaborate, and execute across your entire operation. 24/7."}
+            text={"AI Agent — a sovereign, autonomous network that thinks, collaborates, and executes across your entire operation — 24/7."}
             delay={30}
           />
         </p>
