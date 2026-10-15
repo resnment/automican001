@@ -37,10 +37,10 @@ Opening a draft does not send email. No backend, account, payment, or browser-st
 - `npm run test:browser` (uses Chromium at `/usr/bin/chromium`, `CHROMIUM_PATH`, or Playwright's browser installation)
 - `python3 scripts/audit_project.py . --mode strict`
 
-Browser tests start and stop a local server on port 4175 and retain screenshots, accessibility results and a workflow report in `artifacts/`. Ten workflow groups cover the catalog, greetings, focus, filters/history, role handoffs, framework context, Personal/company validation, draft preservation, email/download and retry, reflow, reduced motion, offline and forced colors. Widths include 320, 390, 520, 720 (200% desktop zoom-equivalent reflow), 768, 950, 1024 and 1440 CSS pixels. Automated accessibility and keyboard checks are not a screen-reader certification; no screen-reader tool is available in this environment.
+Browser tests start and stop a local server on port 4175 and retain screenshots, accessibility results and a workflow report in `artifacts/`. Eleven workflow groups cover the catalog, greetings, focus, filters/history, role handoffs, framework context, Personal/company validation, draft preservation, email/download and retry, reflow, reduced motion, offline and forced colors. Widths include 320, 390, 520, 720 (200% desktop zoom-equivalent reflow), 768, 950, 1024 and 1440 CSS pixels. Automated accessibility and keyboard checks are not a screen-reader certification; no screen-reader tool is available in this environment.
 
 This repository prepares a static production build; pushing a branch or opening a pull request does not itself merge the changes or alter the live domain.
 
 ## Current revision
 
-The simplified layout uses one hero avatar, larger supporting text, compact employee/framework cards and less repeated copy. The user requires explicit approval before another Git pull or pull request.
+The latest layout uses a typographic hero without avatars, equal-size framework cards with local logos, a restored A2A/MCP panel, and a structured professional footer. Employee avatars remain in the role catalog. Larger supporting text and shared controls preserve readability. The user requires explicit approval before another Git pull or pull request.
