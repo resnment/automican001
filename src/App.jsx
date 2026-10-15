@@ -55,14 +55,6 @@ function Brand() {
     </a>
   );
 }
-function HeroPreview() {
-  return (
-    <div className="hero-preview">
-      <AvatarGreeting agent={AGENTS[0]} className="hero-avatar" />
-      <p>{AGENTS[0].designation}</p>
-    </div>
-  );
-}
 function EmployeeCard({ agent, onDetails, onInquiry }) {
   return (
     <article
@@ -316,7 +308,10 @@ function FrameworkSection({ onInquiry }) {
       <div className="framework-grid">
         {frameworks.slice(0, expanded ? frameworks.length : 8).map((f) => (
           <article className="framework-card" key={f.name}>
-            <div>
+            <span className="framework-logo" aria-hidden="true">
+              <img src={`/logos/${f.logo}.svg`} alt="" width="36" height="36" />
+            </span>
+            <div className="framework-copy">
               <h3>{f.name}</h3>
               <p>{f.detail}</p>
             </div>
@@ -364,24 +359,64 @@ function FrameworkSection({ onInquiry }) {
           />
         </button>
       )}
-      <p className="connection-note">
-        Connect agents with{" "}
-        <a
-          href="https://a2a-protocol.org/latest/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          A2A
-        </a>{" "}
-        and tools with{" "}
-        <a
-          href="https://modelcontextprotocol.io/docs/getting-started/intro"
-          target="_blank"
-          rel="noreferrer"
-        >
-          MCP
-        </a>
-        . Compatibility is checked during scoping.
+      <div className="interoperability">
+        <div className="connection-copy">
+          <h3>
+            Independent agents.
+            <br />
+            <span>Connected possibilities.</span>
+          </h3>
+          <p>
+            Agents don’t have to share a framework to share a goal. We design
+            the connections and verify each integration before rollout.
+          </p>
+        </div>
+        <div className="protocols">
+          <a
+            href="https://a2a-protocol.org/latest/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="A2A protocol documentation (opens in new tab)"
+          >
+            <span className="protocol-icon">
+              <img src="/logos/a2a.svg" width="36" height="36" alt="" />
+            </span>
+            <span>
+              <strong>
+                A2A <span>Agent ↔ Agent</span>
+              </strong>
+              <span>
+                Discover, delegate, and exchange results across compatible
+                agents.
+              </span>
+            </span>
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+          <a
+            href="https://modelcontextprotocol.io/docs/getting-started/intro"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="MCP protocol documentation (opens in new tab)"
+          >
+            <span className="protocol-icon">
+              <img src="/logos/mcp.svg" width="36" height="36" alt="" />
+            </span>
+            <span>
+              <strong>
+                MCP <span>Agent ↔ Tools & data</span>
+              </strong>
+              <span>
+                Connect agents to your systems through supported tools and
+                resources.
+              </span>
+            </span>
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+        </div>
+      </div>
+      <p className="framework-footnote">
+        Compatibility depends on supported APIs, permissions, and testing.
+        Framework and protocol names identify build options, not partnerships.
       </p>
     </section>
   );
@@ -494,7 +529,6 @@ export default function App() {
               </button>
             </div>
           </div>
-          <HeroPreview />
         </section>
         <section
           className="audience-section container"
@@ -526,7 +560,17 @@ export default function App() {
         </section>
         <FrameworkSection onInquiry={openInquiry} />
         <section className="faq-section container section-space" id="questions">
-          <h2>A few answers.</h2>
+          <div className="faq-intro">
+            <h2>
+              The human
+              <br />
+              <span>questions.</span>
+            </h2>
+            <p>Clear answers before we build.</p>
+            <a href="mailto:automicanhq@gmail.com" className="text-button">
+              Talk to the humans <ArrowUpRight size={18} aria-hidden="true" />
+            </a>
+          </div>
           <div className="faq-list">
             {FAQS.map(([q, a]) => (
               <details key={q}>
@@ -540,10 +584,65 @@ export default function App() {
           </div>
         </section>
       </main>
-      <footer className="site-footer container">
-        <Brand />
-        <a href="mailto:automicanhq@gmail.com">automicanhq@gmail.com</a>
-        <span>© {new Date().getFullYear()} Automican</span>
+      <footer className="site-footer" id="contact">
+        <div className="container">
+          <div className="footer-invitation">
+            <h2>
+              Your next chapter.
+              <br />
+              <span>Built around you.</span>
+            </h2>
+            <div>
+              <p>
+                Tell us what takes up your day.
+                <br />
+                Let’s find what AI can take off your plate.
+              </p>
+              <Button onClick={() => openInquiry()}>
+                Discuss your project{" "}
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+          <div className="footer-main">
+            <div className="footer-about">
+              <Brand />
+              <p>
+                AI employees and custom agent systems for companies,
+                organizations, institutions, and personal work.
+              </p>
+              <span className="footer-language">
+                Bangla & English workflows
+              </span>
+            </div>
+            <nav aria-label="Footer navigation">
+              <h3>Explore</h3>
+              <a href="#employees">AI employees</a>
+              <a href="#custom">Custom builds</a>
+              <a href="#frameworks">Frameworks & platforms</a>
+              <a href="#questions">Questions & answers</a>
+            </nav>
+            <div className="footer-contact">
+              <h3>Start a conversation</h3>
+              <a href="mailto:automicanhq@gmail.com">
+                automicanhq@gmail.com{" "}
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </a>
+              <p>
+                Share your role, tools, and goals. We’ll agree on scope and
+                pricing before work begins.
+              </p>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <span>
+              © {new Date().getFullYear()} Automican. All rights reserved.
+            </span>
+            <a href="#top">
+              Back to top <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
       </footer>
       <Dialog
         open={!!detail}

@@ -1,5 +1,5 @@
 {
-  "passed": 10,
+  "passed": 11,
   "checks": [
     {
       "name": "New employee catalog, audience wording, readable type, local assets and accessibility",
@@ -39,6 +39,10 @@
     },
     {
       "name": "Touch greetings, popup geometry, reduced motion, offline and forced colors",
+      "passed": true
+    },
+    {
+      "name": "Footer navigation, FAQ keyboard disclosure and project inquiry",
       "passed": true
     }
   ],

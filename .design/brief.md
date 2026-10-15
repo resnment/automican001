@@ -23,3 +23,7 @@ Compare before screenshots with the rendered result; verify hover/focus/tap/Esca
 ## Latest approved simplification
 
 Replace the decorative three-avatar constellation with one simple avatar. Add AI to the hero headline. Remove the audience eyebrow and connecting “or”, card codes/categories/chips, popup headings and close buttons, visible Meet me labels, duplicate process/CTA sections and excess padding. Raise supporting text to at least 14px and keep action buttons, labels and icons consistent. Keep role discovery, hand-raise greetings, Hire/Build intent, personal inquiries and researched framework selection. This revision includes a refreshed source ZIP and is authorized for a GitHub push; no Git pull or new pull request is authorized.
+
+## Latest hero, framework and footer refinement
+
+The owner requests a premium top/bottom without avatars, equal-size framework cards with their framework/company logo on the left, the former detailed A2A/MCP section with protocol logos, and a professional footer with useful company/service/contact information. Keep the compact role catalog, readable supporting type, existing palette and all inquiry behavior. Restore the human-questions FAQ treatment. Use a larger full-width typographic hero and a structured footer invitation/navigation/contact composition. No fictitious address, legal policy, social account, statistic or partnership. Logos stay local with provenance recorded in logo-sources.md. No Git pull is authorized.

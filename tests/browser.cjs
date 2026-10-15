@@ -126,6 +126,15 @@ async function a11y(page, name) {
             0,
           );
         assert.equal(await page.locator(".hero-constellation").count(), 0);
+        assert.equal(await page.locator(".hero .employee-avatar").count(), 0);
+        assert.equal(
+          await page
+            .locator(".hero")
+            .getByText("AI Social Media Manager", { exact: true })
+            .count(),
+          0,
+        );
+        assert.equal(await page.locator("footer .employee-avatar").count(), 0);
         for (const card of await page.locator(".employee-card").all())
           assert.ok(
             (await card.boundingBox()).height <= 340,
@@ -133,8 +142,8 @@ async function a11y(page, name) {
           );
         for (const card of await page.locator(".framework-card").all())
           assert.ok(
-            (await card.boundingBox()).height <= 120,
-            "Framework cards have no padded empty rows",
+            (await card.boundingBox()).height <= 180,
+            "Framework cards retain a compact layout",
           );
         const buttonSizes = await page.locator(".button").evaluateAll((nodes) =>
           nodes
@@ -158,7 +167,10 @@ async function a11y(page, name) {
     await check(
       "Avatar hover introduction, raised hand, hoverable content and keyboard dismissal",
       async () => {
-        const owner = page.locator(".hero-avatar");
+        const owner = page
+          .locator(".employee-card")
+          .first()
+          .locator(".avatar-greeting");
         const trigger = owner.locator(".avatar-trigger");
         await trigger.hover();
         await owner.locator(".avatar-speech").waitFor({ state: "visible" });
@@ -167,7 +179,7 @@ async function a11y(page, name) {
           /AI Social Media Manager/,
         );
         await page.waitForFunction(() => {
-          const el = document.querySelector(".hero-avatar .avatar-wave-arm");
+          const el = document.querySelector(".employee-card .avatar-wave-arm");
           const t = getComputedStyle(el).transform;
           return t !== "none" && !t.startsWith("matrix(1,");
         });
@@ -314,6 +326,29 @@ async function a11y(page, name) {
           .getByRole("button", { name: "Explore all 16 options" })
           .click();
         assert.equal(await page.locator(".framework-card").count(), 16);
+        await page.waitForFunction(() =>
+          [
+            ...document.querySelectorAll(".framework-card img, .protocols img"),
+          ].every((img) => img.complete && img.naturalWidth > 0),
+        );
+        assert.equal(await page.locator(".framework-card img").count(), 16);
+        assert.equal(await page.locator(".protocols img").count(), 2);
+        const dimensions = await page
+          .locator(".framework-card")
+          .evaluateAll((nodes) =>
+            nodes.map((el) => ({
+              width: el.getBoundingClientRect().width,
+              height: el.getBoundingClientRect().height,
+            })),
+          );
+        assert.ok(
+          dimensions.every(
+            (rect) =>
+              Math.abs(rect.width - dimensions[0].width) < 1 &&
+              Math.abs(rect.height - dimensions[0].height) < 1,
+          ),
+          "Every framework card has the same dimensions",
+        );
         for (const card of await page.locator(".framework-card").all()) {
           const docs = card.getByRole("link", {
             name: /official documentation/,
@@ -354,8 +389,8 @@ async function a11y(page, name) {
         assert.equal(await dialog.isVisible(), true);
         await page.keyboard.press("Escape");
         assert.match(
-          await page.locator(".connection-note").innerText(),
-          /Connect agents with A2A and tools with MCP/,
+          await page.locator(".interoperability").innerText(),
+          /Independent agents[\s\S]*Connected possibilities[\s\S]*A2A[\s\S]*MCP/,
         );
       },
     );
@@ -548,6 +583,17 @@ async function a11y(page, name) {
             true,
             `No whole-page horizontal overflow at ${width}px`,
           );
+          const cardHeights = await page
+            .locator(".framework-card")
+            .evaluateAll((nodes) =>
+              nodes.map((el) => el.getBoundingClientRect().height),
+            );
+          assert.ok(
+            cardHeights.every(
+              (height) => Math.abs(height - cardHeights[0]) < 1,
+            ),
+            `Equal framework card heights at ${width}px`,
+          );
           const sizes = await page.locator(".button").evaluateAll((nodes) =>
             nodes
               .filter((el) => el.getClientRects().length)
@@ -676,6 +722,66 @@ async function a11y(page, name) {
         );
         await touch.close();
         assert.deepEqual(errors, []);
+      },
+    );
+    await check(
+      "Footer navigation, FAQ keyboard disclosure and project inquiry",
+      async () => {
+        await page.setViewportSize({ width: 1440, height: 1050 });
+        await page.goto(base);
+        const footer = page.locator("footer");
+        for (const link of await footer.locator('a[href^="#"]').all()) {
+          assert.equal(
+            await page.locator(await link.getAttribute("href")).count(),
+            1,
+          );
+        }
+        assert.equal(
+          await footer
+            .locator('a[href="mailto:automicanhq@gmail.com"]')
+            .count(),
+          1,
+        );
+        const question = page.locator(".faq-list summary").first();
+        await question.focus();
+        await page.keyboard.press("Enter");
+        assert.equal(
+          await question.evaluate((el) => el.parentElement.open),
+          true,
+        );
+        await page.keyboard.press("Enter");
+        assert.equal(
+          await question.evaluate((el) => el.parentElement.open),
+          false,
+        );
+        const project = footer.getByRole("button", {
+          name: "Discuss your project",
+        });
+        await project.click();
+        const dialog = page.locator("dialog[open]");
+        assert.equal(
+          await dialog.getByLabel("I want to", { exact: true }).inputValue(),
+          "Build",
+        );
+        await page.keyboard.press("Escape");
+        assert.equal(
+          await project.evaluate((el) => el === document.activeElement),
+          true,
+        );
+        await footer.screenshot({ path: "artifacts/footer-refined.png" });
+        await page.evaluate(() => scrollTo(0, 0));
+        await page.mouse.click(5, 400);
+        await page.screenshot({
+          path: "artifacts/desktop-refined.png",
+          fullPage: true,
+        });
+        await page.screenshot({ path: "artifacts/hero-refined.png" });
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.evaluate(() => scrollTo(0, 0));
+        await page.screenshot({
+          path: "artifacts/mobile-refined.png",
+          fullPage: true,
+        });
       },
     );
     fs.writeFileSync(
