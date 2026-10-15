@@ -63,21 +63,48 @@ async function a11y(page, name) {
       args: ["--no-sandbox"],
     });
     const context = await browser.newContext({
-      viewport: { width: 1440, height: 1000 },
+      viewport: { width: 1440, height: 1050 },
       acceptDownloads: true,
     });
     const page = await context.newPage();
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto(base);
-    await page.getByRole("heading", { name: /Big ambitions/ }).waitFor();
+    await page.getByRole("heading", { name: /Your next hire/ }).waitFor();
     await page.evaluate(() => document.fonts.ready);
     await check(
-      "Landing content, local fonts, scrollbar, links and desktop accessibility",
+      "New employee catalog, audience wording, readable type, local assets and accessibility",
       async () => {
-        assert.match(await page.title(), /Automican/);
-        assert.equal(await page.locator(".team-card").count(), 4);
-        assert.equal(await page.locator('a[href="#"]').count(), 0);
+        assert.match(await page.title(), /AI employees/);
+        assert.equal(await page.locator(".employee-card").count(), 6);
+        const audience = await page.locator(".audience-list").innerText();
+        for (const word of [
+          "Companies",
+          "Organizations",
+          "Institutions",
+          "Personal",
+        ])
+          assert.match(audience, new RegExp(word));
+        assert.doesNotMatch(audience, /Offices/);
+        assert.equal(
+          await page.getByText("Origin Chief", { exact: true }).count(),
+          0,
+        );
+        const undersized = await page
+          .locator("p,span,a,button,summary,label")
+          .evaluateAll((nodes) =>
+            nodes
+              .filter(
+                (e) =>
+                  e.getClientRects().length &&
+                  parseFloat(getComputedStyle(e).fontSize) < 11,
+              )
+              .map((e) => ({
+                text: e.textContent.slice(0, 50),
+                size: getComputedStyle(e).fontSize,
+              })),
+          );
+        assert.deepEqual(undersized, []);
         assert.notEqual(
           await page.evaluate(
             () => getComputedStyle(document.documentElement).scrollbarColor,
@@ -97,194 +124,307 @@ async function a11y(page, name) {
       },
     );
     await check(
-      "Team details: keyboard focus, native dialog trap, Escape and restoration",
+      "Avatar hover introduction, raised hand, hoverable content and keyboard dismissal",
       async () => {
-        const trigger = page.getByRole("button", {
-          name: "Explore the Origin team",
+        const owner = page.locator(".hero-avatar");
+        const trigger = owner.locator(".avatar-trigger");
+        await trigger.hover();
+        await owner.locator(".avatar-speech").waitFor({ state: "visible" });
+        assert.match(
+          await owner.locator(".avatar-speech").innerText(),
+          /AI Social Media Manager/,
+        );
+        await page.waitForFunction(() => {
+          const el = document.querySelector(".hero-avatar .avatar-wave-arm");
+          const t = getComputedStyle(el).transform;
+          return t !== "none" && !t.startsWith("matrix(1,");
         });
-        await trigger.click();
-        const dialog = page.locator("dialog[open]");
-        await dialog
-          .getByRole("heading", { name: "Origin team", exact: true })
-          .waitFor();
-        assert.equal(await dialog.locator(".detail-roles>div").count(), 7);
-        for (let i = 0; i < 9; i++) {
-          await page.keyboard.press("Tab");
-          assert.equal(
-            await page.evaluate(
-              () =>
-                !!document.activeElement.closest("dialog[open]") ||
-                document.activeElement.tagName === "DIALOG",
-            ),
-            true,
-          );
-        }
-        await a11y(page, "team");
-        await page.keyboard.press("Escape");
-        assert.equal(await page.locator("dialog[open]").count(), 0);
+        await owner.locator(".avatar-speech").hover();
+        assert.equal(await trigger.getAttribute("aria-expanded"), "true");
+        await page.screenshot({ path: "artifacts/avatar-greeting.png" });
+        await owner
+          .getByRole("button", {
+            name: "Close Social Media Manager introduction",
+          })
+          .click();
+        assert.equal(await trigger.getAttribute("aria-expanded"), "false");
         assert.equal(
           await trigger.evaluate((el) => el === document.activeElement),
+          true,
+        );
+        await page.mouse.move(0, 0);
+        await page.keyboard.press("Tab");
+        const cardTrigger = page
+          .locator(".employee-card")
+          .first()
+          .locator(".avatar-trigger");
+        await cardTrigger.focus();
+        assert.equal(await cardTrigger.getAttribute("aria-expanded"), "true");
+        await page.keyboard.press("Escape");
+        assert.equal(await cardTrigger.getAttribute("aria-expanded"), "false");
+        assert.equal(
+          await cardTrigger.evaluate((el) => el === document.activeElement),
           true,
         );
       },
     );
     await check(
-      "Role explorer: search, IME, clear, no-results, native filter, paging and history",
+      "Employee search, IME composition, no-results, filters, history, load more and focus",
       async () => {
-        await page
-          .getByRole("button", { name: /Meet every specialist/ })
-          .click();
         const search = page.getByRole("searchbox", {
-          name: "Search agent roles",
+          name: "Search AI employees",
         });
-        await search.fill("doesnotexist");
-        await page.getByText("No matching roles").waitFor();
+        await search.fill("unfindable role");
         await page
-          .getByRole("button", { name: "Clear search", exact: true })
+          .getByRole("heading", { name: "No employees found" })
+          .waitFor();
+        await page
+          .getByRole("button", { name: "Clear employee search" })
           .click();
         assert.equal(
           await search.evaluate((el) => el === document.activeElement),
           true,
         );
-        assert.match(
-          await page.locator(".table-footer").innerText(),
-          /1–5 of 30 roles/,
-        );
         await search.dispatchEvent("compositionstart");
-        await search.fill("engineer");
+        await search.fill("accountant");
         assert.equal(new URL(page.url()).searchParams.get("q"), null);
         await search.dispatchEvent("compositionend");
-        assert.equal(new URL(page.url()).searchParams.get("q"), "engineer");
+        assert.equal(new URL(page.url()).searchParams.get("q"), "accountant");
+        assert.equal(await page.locator(".employee-card").count(), 1);
         await page
-          .getByRole("button", { name: "Clear search", exact: true })
+          .getByRole("button", { name: "Clear employee search" })
           .click();
-        const select = page.getByLabel("Filter by department");
-        await select.focus();
-        await page.keyboard.press("Space");
-        await page.keyboard.press("Escape");
-        await select.selectOption("Development");
-        assert.match(
-          await page.locator(".table-footer").innerText(),
-          /1–5 of 9 roles/,
-        );
         await page
-          .getByRole("button", { name: "Next page", exact: true })
+          .getByRole("group", { name: "Employee categories" })
+          .getByRole("button", { name: "Personal", exact: true })
           .click();
-        assert.match(
-          await page.locator(".table-footer").innerText(),
-          /6–9 of 9 roles/,
+        assert.equal(await page.locator(".employee-card").count(), 1);
+        assert.equal(
+          new URL(page.url()).searchParams.get("category"),
+          "Personal",
         );
         await page.goBack();
-        assert.match(
-          await page.locator(".table-footer").innerText(),
-          /1–5 of 9 roles/,
-        );
+        assert.equal(await page.locator(".employee-card").count(), 6);
         await page
-          .getByRole("button", { name: "Agent role", exact: true })
+          .getByRole("button", { name: "Meet all 12 employees" })
           .click();
+        assert.equal(await page.locator(".employee-card").count(), 12);
         assert.equal(
-          await page.locator("th[aria-sort]").getAttribute("aria-sort"),
-          "descending",
+          await page
+            .locator("#employee-ecommerce .avatar-trigger")
+            .evaluate((el) => el === document.activeElement),
+          true,
         );
-        await page
-          .getByRole("button", { name: "UX/UI Designer", exact: true })
-          .click();
-        const dialog = page.locator("dialog[open]");
-        await dialog.getByText("What this role brings").waitFor();
-        await dialog.getByRole("button", { name: "Discuss this role" }).click();
-        assert.equal(
-          await page.locator("#inquiry-team").inputValue(),
-          "UX/UI Designer",
-        );
+        for (const card of await page.locator(".employee-card").all())
+          assert.equal(
+            await card.getByRole("button", { name: /^Hire / }).count(),
+            1,
+          );
         await page.keyboard.press("Escape");
-        await a11y(page, "registry");
       },
     );
     await check(
-      "Detail-to-inquiry handoff, validation, label association and draft preservation",
+      "Role details, native modal keyboard trap, Hire/Build handoff and focus restoration",
       async () => {
+        const entry = page.getByRole("button", {
+          name: "View Accountant details",
+        });
+        await entry.click();
+        let dialog = page.locator("dialog[open]");
+        await dialog
+          .getByRole("heading", { name: "AI Accountant", exact: true })
+          .waitFor();
+        assert.match(await dialog.innerText(), /reconciliation/);
+        for (let i = 0; i < 9; i++) {
+          await page.keyboard.press("Tab");
+          assert.equal(
+            await page.evaluate(
+              () => !!document.activeElement.closest("dialog[open]"),
+            ),
+            true,
+          );
+        }
+        await a11y(page, "employee-detail");
+        await dialog.getByRole("button", { name: "Build this role" }).click();
+        dialog = page.locator("dialog[open]");
+        assert.equal(
+          await dialog.getByLabel("I want to", { exact: true }).inputValue(),
+          "Build",
+        );
+        assert.equal(
+          await dialog
+            .getByLabel("Employee role", { exact: true })
+            .inputValue(),
+          "AI Accountant",
+        );
+        await page.keyboard.press("Escape");
+        assert.equal(
+          await entry.evaluate((el) => el === document.activeElement),
+          true,
+        );
         await page
-          .getByRole("button", { name: "Explore the Development team" })
+          .getByRole("button", { name: "Hire Accountant", exact: true })
+          .click();
+        assert.equal(
+          await page.locator("#inquiry-intent").inputValue(),
+          "Hire",
+        );
+        assert.equal(
+          await page.locator("#inquiry-team").inputValue(),
+          "AI Accountant",
+        );
+        await page.keyboard.press("Escape");
+      },
+    );
+    await check(
+      "Framework catalog, official source links, category filters and Build context",
+      async () => {
+        assert.equal(await page.locator(".framework-card").count(), 8);
+        await page
+          .getByRole("button", { name: "Explore all 16 options" })
+          .click();
+        assert.equal(await page.locator(".framework-card").count(), 16);
+        for (const card of await page.locator(".framework-card").all()) {
+          const docs = card.getByRole("link", {
+            name: /official documentation/,
+          });
+          assert.ok((await docs.getAttribute("href")).startsWith("https://"));
+          assert.equal(await docs.getAttribute("rel"), "noreferrer");
+        }
+        await page
+          .getByRole("group", { name: "Framework types" })
+          .getByRole("button", { name: "Agent platforms", exact: true })
+          .click();
+        assert.equal(await page.locator(".framework-card").count(), 3);
+        await page
+          .getByRole("heading", { name: "ChatGPT dots", exact: true })
+          .waitFor();
+        await page
+          .getByRole("group", { name: "Framework types" })
+          .getByRole("button", { name: "All", exact: true })
           .click();
         await page
-          .locator("dialog[open]")
-          .getByRole("button", { name: "Discuss this team" })
+          .getByRole("button", { name: "Build with Google ADK", exact: true })
+          .click();
+        const dialog = page.locator("dialog[open]");
+        assert.equal(
+          await dialog.getByLabel("I want to", { exact: true }).inputValue(),
+          "Build",
+        );
+        assert.equal(
+          await dialog
+            .getByLabel("Preferred framework or platform")
+            .inputValue(),
+          "Google ADK",
+        );
+        const native = dialog.getByLabel("Preferred framework or platform");
+        await native.focus();
+        await page.keyboard.press("Space");
+        await page.keyboard.press("Escape");
+        assert.equal(await dialog.isVisible(), true);
+        await page.keyboard.press("Escape");
+        assert.match(
+          await page.locator(".protocols").innerText(),
+          /Agent ↔ Agent/,
+        );
+        assert.match(
+          await page.locator(".protocols").innerText(),
+          /Agent ↔ Tools & data/,
+        );
+      },
+    );
+    await check(
+      "Personal inquiry: optional organization, validation, labels, retained draft and review",
+      async () => {
+        await page
+          .getByRole("button", { name: "Hire Personal Assistant", exact: true })
           .click();
         let dialog = page.locator("dialog[open]");
         assert.equal(
-          await dialog.locator("#inquiry-team").inputValue(),
-          "Development team",
+          await dialog.getByLabel("This is for", { exact: true }).inputValue(),
+          "Personal",
+        );
+        assert.equal(
+          await dialog
+            .getByLabel("Organization (optional)")
+            .getAttribute("required"),
+          null,
         );
         await dialog.getByRole("button", { name: "Review inquiry" }).click();
         assert.equal(
-          await page.locator("#inquiry-name").getAttribute("aria-invalid"),
+          await dialog
+            .getByLabel("Your name", { exact: true })
+            .getAttribute("aria-invalid"),
           "true",
         );
         assert.equal(
-          await page
-            .locator("#inquiry-name")
+          await dialog
+            .getByLabel("Your name", { exact: true })
             .evaluate((el) => el === document.activeElement),
           true,
         );
         await dialog.getByText("Your name", { exact: true }).click();
         assert.equal(
-          await page
-            .locator("#inquiry-name")
+          await dialog
+            .getByLabel("Your name", { exact: true })
             .evaluate((el) => el === document.activeElement),
           true,
         );
         await dialog
           .getByLabel("Your name", { exact: true })
-          .fill("Alex Morgan");
+          .fill("রহিম Hasan");
         await dialog
-          .getByLabel("Organization", { exact: true })
-          .fill("Example Institute");
+          .getByLabel("Email address", { exact: true })
+          .fill("invalid-address");
         await dialog
-          .getByLabel("Work email", { exact: true })
-          .fill("not-an-email");
-        await dialog
-          .getByLabel("What would you like your agents to do?")
+          .getByLabel("What work would you like help with?")
           .fill(
-            "Coordinate our research workflow and prepare weekly reports for review.",
+            "Help me organize my weekly priorities and draft routine messages for my review.",
           );
         await dialog.getByRole("button", { name: "Review inquiry" }).click();
         assert.equal(
-          await page.locator("#inquiry-email").getAttribute("aria-invalid"),
+          await dialog
+            .getByLabel("Email address", { exact: true })
+            .getAttribute("aria-invalid"),
           "true",
         );
         await dialog
-          .getByLabel("Work email", { exact: true })
-          .fill("alex@example.org");
+          .getByLabel("Email address", { exact: true })
+          .fill("rahim@example.org");
         await a11y(page, "inquiry");
         await page.keyboard.press("Escape");
-        assert.equal(
-          await page
-            .getByRole("button", { name: "Explore the Development team" })
-            .evaluate((el) => el === document.activeElement),
-          true,
-        );
         await page
-          .getByRole("button", { name: "Let’s talk", exact: true })
+          .getByRole("button", {
+            name: "Build Personal Assistant",
+            exact: true,
+          })
           .click();
         dialog = page.locator("dialog[open]");
         assert.equal(
           await dialog.getByLabel("Your name", { exact: true }).inputValue(),
-          "Alex Morgan",
+          "রহিম Hasan",
         );
-        await dialog.getByRole("button", { name: "Review inquiry" }).click();
-        await dialog
-          .getByRole("heading", { name: "Your inquiry brief" })
-          .waitFor();
         assert.equal(
-          await dialog
-            .getByRole("heading", { name: "Your inquiry brief" })
-            .evaluate((el) => el === document.activeElement),
+          await dialog.getByLabel("I want to", { exact: true }).inputValue(),
+          "Build",
+        );
+        await dialog
+          .getByLabel("Preferred framework or platform")
+          .selectOption("n8n");
+        await dialog.getByRole("button", { name: "Review inquiry" }).click();
+        const review = dialog.getByRole("heading", {
+          name: "Your inquiry brief",
+        });
+        await review.waitFor();
+        assert.equal(
+          await review.evaluate((el) => el === document.activeElement),
           true,
         );
+        assert.match(await dialog.innerText(), /Personal use/);
       },
     );
     await check(
-      "Inquiry email recipient, encoded values, file download and failure/retry",
+      "Email draft and download retain intent, role, audience and framework; error/retry works",
       async () => {
         const dialog = page.locator("dialog[open]");
         const href = await dialog
@@ -292,14 +432,20 @@ async function a11y(page, name) {
           .getAttribute("href");
         assert.ok(href.startsWith("mailto:automicanhq@gmail.com?"));
         const mail = new URL(href);
-        assert.match(mail.searchParams.get("body"), /Example Institute/);
-        assert.match(mail.searchParams.get("body"), /alex@example.org/);
+        for (const text of [
+          "Build",
+          "AI Personal Assistant",
+          "Personal",
+          "n8n",
+          "rahim@example.org",
+        ])
+          assert.ok(mail.searchParams.get("body").includes(text));
         await a11y(page, "review");
         await dialog.screenshot({ path: "artifacts/inquiry.png" });
         await page.evaluate(() => {
           window.originalCreateURL = URL.createObjectURL;
           URL.createObjectURL = () => {
-            throw new Error("Test download failure");
+            throw new Error("Injected download failure");
           };
         });
         await dialog.getByRole("button", { name: "Download brief" }).click();
@@ -308,44 +454,79 @@ async function a11y(page, name) {
         await page.evaluate(() => {
           URL.createObjectURL = window.originalCreateURL;
         });
-        const downloaded = page.waitForEvent("download");
+        const pending = page.waitForEvent("download");
         await dialog.getByRole("button", { name: "Download brief" }).click();
-        const download = await downloaded;
-        assert.equal(download.suggestedFilename(), "automican-inquiry.txt");
-        assert.match(
-          fs.readFileSync(await download.path(), "utf8"),
-          /automicanhq@gmail.com/,
+        const download = await pending;
+        const text = fs.readFileSync(await download.path(), "utf8");
+        for (const expected of [
+          "Request: Build",
+          "AI Personal Assistant",
+          "Personal",
+          "n8n",
+          "automicanhq@gmail.com",
+        ])
+          assert.ok(text.includes(expected));
+        assert.equal(await dialog.locator(".toast.visible").count(), 1);
+        await page.keyboard.press("Escape");
+      },
+    );
+    await check(
+      "Company inquiry still requires an organization; clear draft is confirmed",
+      async () => {
+        await page
+          .getByRole("button", { name: "Let’s build", exact: true })
+          .click();
+        const dialog = page.locator("dialog[open]");
+        await dialog
+          .getByLabel("This is for", { exact: true })
+          .selectOption("Companies");
+        await dialog.getByRole("button", { name: "Review inquiry" }).click();
+        assert.equal(
+          await page
+            .locator("#inquiry-organization")
+            .getAttribute("aria-invalid"),
+          "true",
+        );
+        await dialog
+          .getByRole("button", { name: "Clear draft…", exact: true })
+          .click();
+        await dialog
+          .getByRole("button", { name: "Keep draft", exact: true })
+          .click();
+        assert.equal(
+          await dialog.getByLabel("Your name", { exact: true }).inputValue(),
+          "রহিম Hasan",
+        );
+        await dialog
+          .getByRole("button", { name: "Clear draft…", exact: true })
+          .click();
+        await dialog
+          .getByRole("button", { name: "Clear draft", exact: true })
+          .click();
+        assert.equal(
+          await dialog.getByLabel("Your name", { exact: true }).inputValue(),
+          "",
         );
         await page.keyboard.press("Escape");
       },
     );
     await check(
-      "Phone: reflow, topology separation, menu Escape, FAQ and modal access",
+      "Responsive reflow from 320px to desktop and zoom-equivalent width",
       async () => {
-        await page.setViewportSize({ width: 390, height: 844 });
-        await page.goto(base);
-        await page.getByRole("heading", { name: /Big ambitions/ }).waitFor();
-        await page.evaluate(() => document.fonts.ready);
-        assert.equal(
-          await page.evaluate(
-            () => document.documentElement.scrollWidth <= innerWidth,
-          ),
-          true,
-        );
-        const core = await page.locator(".orchestrator").boundingBox();
-        for (const node of await page.locator(".map-node").all()) {
-          const rect = await node.boundingBox();
-          const overlapping =
-            rect.x < core.x + core.width &&
-            rect.x + rect.width > core.x &&
-            rect.y < core.y + core.height &&
-            rect.y + rect.height > core.y;
+        for (const width of [320, 390, 520, 720, 768, 950, 1024, 1440]) {
+          await page.setViewportSize({ width, height: 900 });
           assert.equal(
-            overlapping,
-            false,
-            "Topology nodes must not obscure central text",
+            await page.evaluate(
+              () => document.documentElement.scrollWidth <= innerWidth,
+            ),
+            true,
+            `No whole-page horizontal overflow at ${width}px`,
           );
         }
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.goto(base);
+        await page.getByRole("heading", { name: /Your next hire/ }).waitFor();
+        await page.evaluate(() => document.fonts.ready);
         await page.getByRole("button", { name: "Open navigation" }).click();
         assert.equal(await page.locator(".main-nav").isVisible(), true);
         await page.keyboard.press("Escape");
@@ -356,16 +537,12 @@ async function a11y(page, name) {
           true,
         );
         await page
-          .getByText("What is an AI agent swarm?", { exact: true })
+          .getByText("Can I get an agent for personal use?", { exact: true })
           .click();
-        assert.equal(
-          await page.locator(".faq-list details").first().getAttribute("open"),
-          "",
-        );
         await a11y(page, "mobile");
         await page.screenshot({ path: "artifacts/mobile.png", fullPage: true });
         await page
-          .getByRole("button", { name: "Request a custom build" })
+          .getByRole("button", { name: "Hire Accountant", exact: true })
           .click();
         const dialog = page.locator("dialog[open]");
         const rect = await dialog.boundingBox();
@@ -376,9 +553,6 @@ async function a11y(page, name) {
             rect.y + rect.height <= 844,
         );
         await dialog
-          .getByLabel("What would you like your agents to do?")
-          .fill("A ".repeat(200));
-        await dialog
           .getByRole("button", { name: "Review inquiry" })
           .scrollIntoViewIfNeeded();
         assert.equal(
@@ -388,65 +562,85 @@ async function a11y(page, name) {
           true,
         );
         await page.keyboard.press("Escape");
-        await page.setViewportSize({ width: 320, height: 700 });
-        assert.equal(
-          await page.evaluate(
-            () => document.documentElement.scrollWidth <= innerWidth,
-          ),
-          true,
-        );
-        await page.setViewportSize({ width: 768, height: 600 });
-        assert.equal(
-          await page.evaluate(
-            () => document.documentElement.scrollWidth <= innerWidth,
-          ),
-          true,
-        );
       },
     );
     await check(
-      "Offline local workflow, reduced motion and invalid URL recovery",
+      "Touch greetings, popup geometry, reduced motion, offline and forced colors",
       async () => {
-        await page.emulateMedia({ reducedMotion: "reduce" });
-        assert.equal(
-          await page.evaluate(
-            () => getComputedStyle(document.documentElement).scrollBehavior,
-          ),
-          "auto",
+        const touch = await browser.newContext({
+          viewport: { width: 390, height: 844 },
+          hasTouch: true,
+        });
+        const mobile = await touch.newPage();
+        await mobile.goto(base);
+        await mobile.getByRole("heading", { name: /Your next hire/ }).waitFor();
+        const owner = mobile
+          .locator(".employee-card")
+          .first()
+          .locator(".avatar-greeting");
+        await owner.locator(".avatar-trigger").tap();
+        const bubble = owner.locator(".avatar-speech");
+        await bubble.waitFor({ state: "visible" });
+        const rect = await bubble.boundingBox();
+        assert.ok(
+          rect.x >= 0 && rect.x + rect.width <= 390,
+          "Touch speech bubble fits the viewport",
         );
-        await context.setOffline(true);
-        await page
-          .getByRole("button", { name: "Explore the Revenue team" })
+        await owner
+          .getByRole("button", {
+            name: "Close Social Media Manager introduction",
+          })
+          .tap();
+        assert.equal(
+          await owner.locator(".avatar-trigger").getAttribute("aria-expanded"),
+          "false",
+        );
+        await mobile.emulateMedia({ reducedMotion: "reduce" });
+        await owner.locator(".avatar-trigger").tap();
+        assert.equal(
+          await owner
+            .locator(".avatar-hand")
+            .evaluate((el) => getComputedStyle(el).animationName),
+          "none",
+        );
+        assert.equal(
+          await owner
+            .locator(".avatar-wave-arm")
+            .evaluate((el) => getComputedStyle(el).transitionDuration),
+          "0s",
+        );
+        await mobile.keyboard.press("Escape");
+        await touch.setOffline(true);
+        await mobile
+          .getByRole("button", { name: "View Accountant details" })
           .click();
-        await page
+        await mobile
           .locator("dialog[open]")
-          .getByRole("heading", { name: "Revenue team", exact: true })
+          .getByRole("heading", { name: "AI Accountant", exact: true })
           .waitFor();
-        await page.keyboard.press("Escape");
-        await context.setOffline(false);
-        await page.goto(`${base}/?department=Growth&page=999`);
-        await page.getByRole("heading", { name: /Big ambitions/ }).waitFor();
-        await page.waitForFunction(
-          () => new URL(location.href).searchParams.get("page") === "2",
-        );
-        assert.match(
-          await page.locator(".table-footer").innerText(),
-          /6–7 of 7 roles/,
-        );
-        await page.emulateMedia({ forcedColors: "active" });
+        await mobile.keyboard.press("Escape");
+        await touch.setOffline(false);
+        await mobile.emulateMedia({ forcedColors: "active" });
         assert.equal(
-          await page.evaluate(
+          await mobile.evaluate(
             () => getComputedStyle(document.documentElement).scrollbarColor,
           ),
           "auto",
         );
+        await touch.close();
         assert.deepEqual(errors, []);
       },
     );
     fs.writeFileSync(
       "artifacts/browser-results.json",
       JSON.stringify(
-        { passed: results.length, checks: results, runtimeErrors: errors },
+        {
+          passed: results.length,
+          checks: results,
+          runtimeErrors: errors,
+          screenReader:
+            "Not available; keyboard and automated accessibility checks performed.",
+        },
         null,
         2,
       ),

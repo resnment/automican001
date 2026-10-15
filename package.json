@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src scripts/*.mjs tests/*.cjs",
-    "format": "prettier --write src index.html DESIGN.md UX-CONTRACT.md premium-ui.json package.json eslint.config.js scripts/*.mjs tests/*.cjs",
-    "format:check": "prettier --check src index.html DESIGN.md UX-CONTRACT.md premium-ui.json package.json eslint.config.js scripts/*.mjs tests/*.cjs",
+    "format": "prettier --write src index.html DESIGN.md UX-CONTRACT.md premium-ui.json package.json eslint.config.js scripts/*.mjs tests/*.cjs README.md .design/*.md",
+    "format:check": "prettier --check src index.html DESIGN.md UX-CONTRACT.md premium-ui.json package.json eslint.config.js scripts/*.mjs tests/*.cjs README.md .design/*.md",
     "verify:design": "node scripts/verify-design.mjs",
     "test:browser": "node tests/browser.cjs"
   },
