@@ -7,16 +7,11 @@ import {
   Plus,
   Menu,
   Network,
-  ShieldCheck,
-  Sparkles,
   Building2,
   Users,
   Landmark,
   UserRound,
   Check,
-  Orbit,
-  Workflow,
-  Radio,
   ChevronDown,
   ExternalLink,
 } from "lucide-react";
@@ -33,30 +28,23 @@ const FRAMEWORK_TYPES = [
 ];
 const FAQS = [
   [
-    "What is an AI employee?",
-    "An AI employee is an agent configured for a specific role, such as accounting support, customer care, or social media. You define the job, provide approved knowledge, and agree on tools and review checkpoints. It supports your people; it does not independently become an authorized member of your company.",
+    "Hire or Build?",
+    "Hire starts with an existing employee role. Build customizes a role or workflow around your tools. Both begin with a scope and quote.",
   ],
   [
-    "What is the difference between Hire and Build?",
-    "Hire starts a conversation about one of the roles in our employee catalog. Build starts with your own workflow, tools, preferred framework, or a custom combination of roles. Both begin with scoping; clicking either button does not start a paid engagement.",
+    "Can my agent work in Bangla and English?",
+    "Yes. We agree on the language, tone, and terminology, then review examples with you before rollout.",
   ],
   [
-    "Can my AI employee work in Bangla and English?",
-    "Bangla and English can be part of your brief, including terminology, tone, and mixed-language workflows. We agree on the language requirements and validate representative examples before rollout. Model choice and source information affect the final result.",
+    "Can different frameworks connect?",
+    "We can design connections through supported APIs, A2A, and MCP. Compatibility, access, and approvals are checked for each integration.",
   ],
   [
-    "Can agents built with different frameworks work together?",
-    "Yes, cross-framework collaboration can be designed around supported APIs, Agent2Agent (A2A) for agent communication, and Model Context Protocol (MCP) for tools and data. Each connection still needs compatible capabilities, access permissions, and integration testing. A listed framework is a build option, not a claim that every combination already works.",
-  ],
-  [
-    "Can I get an agent for personal use?",
-    "Yes. Choose Personal in your inquiry. You can start with planning, notes, research organization, or drafting everyday messages. An organization name is optional for personal inquiries.",
-  ],
-  [
-    "How do pricing, access, and approvals work?",
-    "Pricing and timelines follow the agreed scope. We define the tools, access, and human approvals before rollout. Payments, budgets, publishing, hiring decisions, academic decisions, and other consequential actions stay subject to the approvals agreed for your workflow.",
+    "How is pricing decided?",
+    "Pricing depends on the role, tools, and workflow. Send a brief to discuss scope and pricing; no payment is taken here.",
   ],
 ];
+
 function Brand() {
   return (
     <a className="brand" href="#top" aria-label="Automican home">
@@ -67,84 +55,13 @@ function Brand() {
     </a>
   );
 }
-function HeroConstellation() {
+function HeroPreview() {
   return (
-    <div
-      className="hero-constellation"
-      aria-label="Illustrated AI employees with a social media manager introduction"
-    >
-      <div className="constellation-heading">
-        <span className="eyebrow">THE NEXT KIND OF TEAMMATE</span>
-        <span className="constellation-spark" aria-hidden="true">
-          ✦
-        </span>
-      </div>
-      <svg
-        className="constellation-orbits"
-        viewBox="0 0 600 620"
-        fill="none"
-        aria-hidden="true"
-      >
-        <ellipse
-          cx="307"
-          cy="350"
-          rx="258"
-          ry="132"
-          transform="rotate(-28 307 350)"
-        />
-        <ellipse
-          cx="307"
-          cy="350"
-          rx="210"
-          ry="241"
-          transform="rotate(25 307 350)"
-        />
-        <path d="M76 399L289 324 507 404M289 324V112" />
-        <circle cx="289" cy="112" r="4" />
-        <circle cx="76" cy="399" r="4" />
-        <circle cx="507" cy="404" r="4" />
-      </svg>
-      <span className="constellation-note">
-        <span />
-        DESIGNED TO WORK WITH YOU
-      </span>
-      <div className="hero-mini mini-accountant accent-gold">
-        <Avatar agent={AGENTS[1]} />
-        <div>
-          <span className="mini-code">AC / FINANCE</span>
-          <strong>Accountant</strong>
-        </div>
-      </div>
-      <AvatarGreeting agent={AGENTS[0]} className="hero-avatar" hero />
-      <div className="hero-role-label">
-        <span className="label-spark" aria-hidden="true">
-          ✦
-        </span>
-        <div>
-          <span>MEET YOUR NEXT HIRE</span>
-          <strong>AI Social Media Manager</strong>
-        </div>
-        <ArrowUpRight size={19} aria-hidden="true" />
-      </div>
-      <div className="hero-mini mini-support accent-cyan">
-        <Avatar agent={AGENTS[2]} />
-        <div>
-          <span className="mini-code">CC / EXPERIENCE</span>
-          <strong>Customer Care</strong>
-        </div>
-      </div>
-      <div className="constellation-footer">
-        <span>
-          <HandHint />
-          Hover, focus, or tap to say hello.
-        </span>
-        <span>HUMAN-LED. AI-ENABLED.</span>
-      </div>
+    <div className="hero-preview">
+      <AvatarGreeting agent={AGENTS[0]} className="hero-avatar" />
+      <p>{AGENTS[0].designation}</p>
     </div>
   );
-}
-function HandHint() {
-  return <Sparkles size={15} aria-hidden="true" />;
 }
 function EmployeeCard({ agent, onDetails, onInquiry }) {
   return (
@@ -152,29 +69,19 @@ function EmployeeCard({ agent, onDetails, onInquiry }) {
       id={`employee-${agent.id}`}
       className={`employee-card accent-${agent.accent}`}
     >
-      <div className="employee-card-top">
-        <span className="employee-code">
-          {agent.code} <span>/ AI EMPLOYEE</span>
-        </span>
-        <button
-          className="icon-button"
-          aria-label={`View ${agent.short} details`}
-          onClick={() => onDetails(agent)}
-        >
-          <ArrowUpRight size={20} />
-        </button>
+      <div className="employee-card-main">
+        <AvatarGreeting agent={agent} />
+        <h3>
+          <button
+            className="role-title-button"
+            aria-label={`View ${agent.short} details`}
+            onClick={() => onDetails(agent)}
+          >
+            {agent.short}
+          </button>
+        </h3>
       </div>
-      <AvatarGreeting agent={agent} />
-      <div className="employee-card-content">
-        <span className="role-category">{agent.category}</span>
-        <h3>{agent.short}</h3>
-        <p>{agent.summary}</p>
-        <div className="role-skills">
-          {agent.tools.map((t) => (
-            <span key={t}>{t}</span>
-          ))}
-        </div>
-      </div>
+      <p className="employee-summary">{agent.summary}</p>
       <div className="employee-card-actions">
         <Button
           onClick={() =>
@@ -270,18 +177,7 @@ function EmployeeExplorer({ onDetails, onInquiry }) {
       id="employees"
     >
       <div className="section-heading">
-        <div>
-          <span className="eyebrow">REAL ROLES. EXTRAORDINARY TEAMMATES.</span>
-          <h2>
-            Good people deserve
-            <br />
-            <span>great AI colleagues.</span>
-          </h2>
-        </div>
-        <p>
-          Meet the specialists for the work you do every day. Hire a role. Build
-          it around your workflow. Bring a whole team together.
-        </p>
+        <h2>AI employees for everyday work.</h2>
       </div>
       <div className="employee-toolbar">
         <div className="search-field">
@@ -363,10 +259,6 @@ function EmployeeExplorer({ onDetails, onInquiry }) {
         </div>
       )}
       <div className="employee-gallery-footer">
-        <span>
-          Role previews are illustrative. We agree on capabilities and tools
-          with you.
-        </span>
         {matched.length > state.shown && (
           <Button
             emphasis="outline"
@@ -396,17 +288,9 @@ function FrameworkSection({ onInquiry }) {
     >
       <div className="section-heading">
         <div>
-          <span className="eyebrow">YOUR FRAMEWORK. YOUR FREEDOM.</span>
-          <h2>
-            Different engines.
-            <br />
-            <span>One shared ambition.</span>
-          </h2>
+          <h2>Build with your preferred framework.</h2>
+          <p>Choose a stack, or let us help you pick one.</p>
         </div>
-        <p>
-          Build with your preferred framework or agent platform. We shape the
-          architecture around your team, your tools, and the way you work.
-        </p>
       </div>
       <div className="framework-heading">
         <div
@@ -428,20 +312,17 @@ function FrameworkSection({ onInquiry }) {
             </button>
           ))}
         </div>
-        <span className="research-date">RESEARCHED 15 OCT 2026</span>
       </div>
       <div className="framework-grid">
         {frameworks.slice(0, expanded ? frameworks.length : 8).map((f) => (
           <article className="framework-card" key={f.name}>
-            <div className="framework-mark" aria-hidden="true">
-              {f.short}
-            </div>
             <div>
               <h3>{f.name}</h3>
               <p>{f.detail}</p>
             </div>
             <div className="framework-actions">
               <a
+                className="button button-ghost intent-neutral"
                 href={f.url}
                 target="_blank"
                 rel="noreferrer"
@@ -449,7 +330,9 @@ function FrameworkSection({ onInquiry }) {
               >
                 Docs <ExternalLink size={13} aria-hidden="true" />
               </a>
-              <button
+              <Button
+                emphasis="ghost"
+                intent="neutral"
                 onClick={() =>
                   onInquiry({
                     intent: "Build",
@@ -459,8 +342,8 @@ function FrameworkSection({ onInquiry }) {
                 }
                 aria-label={`Build with ${f.name}`}
               >
-                Build <ArrowUpRight size={14} aria-hidden="true" />
-              </button>
+                Build <ArrowUpRight size={18} aria-hidden="true" />
+              </Button>
             </div>
           </article>
         ))}
@@ -481,75 +364,24 @@ function FrameworkSection({ onInquiry }) {
           />
         </button>
       )}
-      <div className="interoperability">
-        <div>
-          <span className="eyebrow">THE CONNECTION LAYER</span>
-          <h3>
-            Independent agents.
-            <br />
-            Connected possibilities.
-          </h3>
-          <p>
-            Agents don’t have to share a framework to share a goal. We design
-            the connections and verify each integration before rollout.
-          </p>
-        </div>
-        <div className="protocols">
-          <a
-            href="https://a2a-protocol.org/latest/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span className="protocol-icon">
-              <Radio size={24} aria-hidden="true" />
-            </span>
-            <span>
-              <strong>
-                A2A <span>Agent ↔ Agent</span>
-              </strong>
-              <span>
-                Discover, delegate, and exchange results across compatible
-                agents.
-              </span>
-            </span>
-            <ArrowUpRight size={18} aria-hidden="true" />
-          </a>
-          <a
-            href="https://modelcontextprotocol.io/docs/getting-started/intro"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span className="protocol-icon">
-              <Workflow size={24} aria-hidden="true" />
-            </span>
-            <span>
-              <strong>
-                MCP <span>Agent ↔ Tools & data</span>
-              </strong>
-              <span>
-                Connect agents to your systems through supported tools and
-                resources.
-              </span>
-            </span>
-            <ArrowUpRight size={18} aria-hidden="true" />
-          </a>
-        </div>
-      </div>
-      <p className="framework-footnote">
-        Frameworks and platforms are build options, not partner endorsements.
-        Cross-framework connections depend on supported APIs, protocols,
-        permissions, and testing. Have another stack?{" "}
-        <button
-          className="text-button"
-          onClick={() =>
-            onInquiry({
-              intent: "Build",
-              framework: "Other / my existing setup",
-            })
-          }
+      <p className="connection-note">
+        Connect agents with{" "}
+        <a
+          href="https://a2a-protocol.org/latest/"
+          target="_blank"
+          rel="noreferrer"
         >
-          Tell us about it <ArrowUpRight size={15} aria-hidden="true" />
-        </button>
+          A2A
+        </a>{" "}
+        and tools with{" "}
+        <a
+          href="https://modelcontextprotocol.io/docs/getting-started/intro"
+          target="_blank"
+          rel="noreferrer"
+        >
+          MCP
+        </a>
+        . Compatibility is checked during scoping.
       </p>
     </section>
   );
@@ -612,7 +444,6 @@ export default function App() {
               ["AI employees", "#employees"],
               ["Custom builds", "#custom"],
               ["Frameworks", "#frameworks"],
-              ["How it works", "#how-it-works"],
             ].map(([label, url]) => (
               <a key={url} href={url} onClick={() => setMobileOpen(false)}>
                 {label}
@@ -642,55 +473,38 @@ export default function App() {
       <main id="main">
         <section className="hero container">
           <div className="hero-copy">
-            <span className="hero-eyebrow">
-              <span aria-hidden="true">✦</span> INTELLIGENCE, WITH PERSONALITY.
-            </span>
             <h1>
-              Your next hire.
+              Your next AI hire.
               <br />
               <span>Beyond ordinary.</span>
             </h1>
-            <p>
-              Meet AI employees built for real work. From balancing the books to
-              growing your brand, find your specialist—or build one that’s
-              entirely yours.
-            </p>
+            <p>Hire an AI specialist or build one around your work.</p>
             <div className="hero-actions">
               <a
                 href="#employees"
                 className="button button-solid intent-primary"
               >
-                Meet your AI employees <ArrowUpRight size={19} />
+                Explore employees <ArrowUpRight size={19} />
               </a>
               <button
-                className="hero-secondary text-button"
+                className="button button-outline intent-neutral"
                 onClick={() => openInquiry()}
               >
-                Build a custom agent <ArrowRight size={19} />
+                Build an agent <ArrowRight size={19} />
               </button>
             </div>
-            <div className="hero-trust">
-              <span>
-                <ShieldCheck size={16} aria-hidden="true" />
-                Your goals. Your direction.
-              </span>
-              <span className="trust-divider" />
-              <span>Made for the way Bangladesh works.</span>
-            </div>
           </div>
-          <HeroConstellation />
+          <HeroPreview />
         </section>
         <section
           className="audience-section container"
-          aria-label="Companies Organizations Institutions or Personal"
+          aria-label="Companies, Organizations, Institutions, Personal"
         >
-          <span className="eyebrow">ONE PLATFORM. YOUR KIND OF WORK.</span>
           <div className="audience-list">
             {AUDIENCES.map((a, i) => {
               const Icon = AUDIENCE_ICONS[i];
               return (
                 <React.Fragment key={a}>
-                  {i === 3 && <span className="audience-or">or</span>}
                   <span>
                     <Icon size={22} aria-hidden="true" />
                     {a}
@@ -702,119 +516,17 @@ export default function App() {
         </section>
         <EmployeeExplorer onDetails={openDetails} onInquiry={openInquiry} />
         <section className="custom-section container section-space" id="custom">
-          <div className="custom-copy">
-            <span className="eyebrow">A ROLE IS ONLY THE BEGINNING.</span>
-            <h2>
-              Built around your work.
-              <br />
-              <span>Not the other way around.</span>
-            </h2>
-            <p>
-              Your approvals, your language, your way of getting things done. We
-              turn your everyday workflows into a brief for an AI employee—or a
-              coordinated swarm.
-            </p>
-            <ul>
-              <li>
-                <Check size={18} aria-hidden="true" />
-                Bangla and English workflows scoped to your team
-              </li>
-              <li>
-                <Check size={18} aria-hidden="true" />
-                Your tools, preferred framework, and knowledge
-              </li>
-              <li>
-                <Check size={18} aria-hidden="true" />
-                Human checkpoints for decisions that matter
-              </li>
-            </ul>
-            <Button onClick={() => openInquiry()}>
-              Build something that fits <ArrowUpRight size={18} />
-            </Button>
+          <div>
+            <h2>Your workflow. Your AI.</h2>
+            <p>Build around your tools, language, and approvals.</p>
           </div>
-          <div className="custom-blueprint">
-            <span className="blueprint-label">
-              YOUR AI EMPLOYEE / CUSTOM CONFIGURATION
-            </span>
-            <div className="blueprint-orbit">
-              <Avatar agent={AGENTS[11]} />
-              <span className="blueprint-node node-language">
-                বাংলা + English
-              </span>
-              <span className="blueprint-node node-tools">
-                <Workflow size={16} aria-hidden="true" />
-                Your tools
-              </span>
-              <span className="blueprint-node node-human">
-                <ShieldCheck size={16} aria-hidden="true" />
-                Human direction
-              </span>
-            </div>
-            <div className="blueprint-caption">
-              <Sparkles size={18} aria-hidden="true" />
-              <span>A little more you. A lot more possible.</span>
-            </div>
-          </div>
+          <Button onClick={() => openInquiry()}>
+            Build a custom agent <ArrowUpRight size={18} />
+          </Button>
         </section>
         <FrameworkSection onInquiry={openInquiry} />
-        <section
-          className="process-section container section-space"
-          id="how-it-works"
-        >
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow">
-                FROM NICE TO MEET YOU, TO LET’S GET TO WORK.
-              </span>
-              <h2>
-                A better way to work.
-                <br />
-                <span>Starts with a conversation.</span>
-              </h2>
-            </div>
-          </div>
-          <div className="process-grid">
-            {[
-              {
-                title: "Choose your teammate.",
-                text: "Find the role you need, or tell us about a workflow that deserves its own kind of intelligence.",
-              },
-              {
-                title: "Make it your own.",
-                text: "Agree on the responsibilities, language, framework, tools, and human approvals. Start with a focused scope.",
-              },
-              {
-                title: "Build. Review. Grow.",
-                text: "Validate the workflow with your team before rollout. Expand when the work and the results make sense.",
-              },
-            ].map((p, i) => (
-              <article key={p.title}>
-                <span className="process-number">
-                  0{i + 1}
-                  <ArrowRight size={20} aria-hidden="true" />
-                </span>
-                <h3>{p.title}</h3>
-                <p>{p.text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
         <section className="faq-section container section-space" id="questions">
-          <div>
-            <span className="eyebrow">CURIOUS? GOOD.</span>
-            <h2>
-              The human
-              <br />
-              <span>questions.</span>
-            </h2>
-            <p>
-              Big ideas deserve clear answers.
-              <br />
-              <a href="mailto:automicanhq@gmail.com" className="text-button">
-                Talk to the humans <ArrowUpRight size={17} />
-              </a>
-            </p>
-          </div>
+          <h2>A few answers.</h2>
           <div className="faq-list">
             {FAQS.map(([q, a]) => (
               <details key={q}>
@@ -827,44 +539,11 @@ export default function App() {
             ))}
           </div>
         </section>
-        <section className="final-cta container">
-          <span className="cta-emblem">
-            <Orbit size={45} strokeWidth={1.3} aria-hidden="true" />
-          </span>
-          <div>
-            <span className="eyebrow">
-              HUMAN AMBITION. EXTRAORDINARY COMPANY.
-            </span>
-            <h2>Your next chapter has a new teammate.</h2>
-          </div>
-          <Button onClick={() => openInquiry()}>
-            Let’s build it <ArrowUpRight size={19} />
-          </Button>
-        </section>
       </main>
       <footer className="site-footer container">
-        <div className="footer-top">
-          <div>
-            <Brand />
-            <p>AI employees. Human ambition.</p>
-          </div>
-          <nav aria-label="Footer navigation">
-            <a href="#employees">Meet the employees</a>
-            <a href="#frameworks">Frameworks & platforms</a>
-            <a href="mailto:automicanhq@gmail.com">
-              Get in touch <ArrowUpRight size={15} />
-            </a>
-          </nav>
-        </div>
-        <div className="footer-bottom">
-          <span>
-            © {new Date().getFullYear()} Automican. All rights reserved.
-          </span>
-          <span>
-            Built for companies, organizations, institutions, and personal
-            ambition.
-          </span>
-        </div>
+        <Brand />
+        <a href="mailto:automicanhq@gmail.com">automicanhq@gmail.com</a>
+        <span>© {new Date().getFullYear()} Automican</span>
       </footer>
       <Dialog
         open={!!detail}
@@ -877,8 +556,7 @@ export default function App() {
             <div className="detail-avatar-row">
               <Avatar agent={detail} />
               <div>
-                <span className="eyebrow">YOUR NEW TEAMMATE</span>
-                <p>{detail.greeting}</p>
+                <p>{detail.summary}</p>
               </div>
             </div>
             <h3>How I can help</h3>

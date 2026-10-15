@@ -19,3 +19,7 @@ An editorial hero beside a staged AI employee constellation; a filterable employ
 ## Verification
 
 Compare before screenshots with the rendered result; verify hover/focus/tap/Escape introductions, waving and reduced motion, all Hire/Build entry points and preserved intent, personal inquiry, framework selection and docs, URL filtering, mobile reflow, keyboard dialogs and download error recovery. Run project checks and retain screenshots and automation evidence. No screen-reader certification is claimed.
+
+## Latest approved simplification
+
+Replace the decorative three-avatar constellation with one simple avatar. Add AI to the hero headline. Remove the audience eyebrow and connecting “or”, card codes/categories/chips, popup headings and close buttons, visible Meet me labels, duplicate process/CTA sections and excess padding. Raise supporting text to at least 14px and keep action buttons, labels and icons consistent. Keep role discovery, hand-raise greetings, Hire/Build intent, personal inquiries and researched framework selection. This revision includes a refreshed source ZIP and is authorized for a GitHub push; no Git pull or new pull request is authorized.

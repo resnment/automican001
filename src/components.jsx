@@ -129,7 +129,6 @@ export function Dialog({
     >
       <div className="dialog-header">
         <div>
-          <span className="eyebrow">AUTOMICAN / LET’S CONNECT</span>
           <h2 id={titleId}>{title}</h2>
         </div>
         <button
@@ -152,13 +151,17 @@ export function Field({ id, label, hint, error, children }) {
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
-      {children}
-      <div
-        className={`field-help ${error ? "field-error" : ""}`}
-        id={`${id}-help`}
-      >
-        {error || hint || "\u00a0"}
-      </div>
+      {React.cloneElement(children, {
+        "aria-describedby": error || hint ? `${id}-help` : undefined,
+      })}
+      {(error || hint) && (
+        <div
+          className={`field-help ${error ? "field-error" : ""}`}
+          id={`${id}-help`}
+        >
+          {error || hint}
+        </div>
+      )}
     </div>
   );
 }
@@ -303,15 +306,15 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
       onClose={onClose}
       title={
         review
-          ? "Your next chapter starts here."
+          ? "Review your inquiry"
           : values.intent === "Hire"
-            ? "Meet your next AI employee."
-            : "Build something of your own."
+            ? "Hire an AI employee"
+            : "Build an AI agent"
       }
       description={
         review
-          ? "Review your brief, then open a prefilled email to Automican."
-          : "A role, a workflow, or a whole team. Tell us what great work looks like for you."
+          ? "Send the brief from your email app, or download a copy."
+          : "Tell us the role and work you need help with."
       }
       className="inquiry-dialog"
     >
@@ -353,9 +356,9 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
           <div className="inquiry-notice">
             <Download size={18} aria-hidden="true" />
             <p>
-              <strong>Ready for automicanhq@gmail.com.</strong> Open your email
-              draft below, then send it from your email app. Prefer another app?
-              Download the brief and email it to us.
+              Send to{" "}
+              <a href="mailto:automicanhq@gmail.com">automicanhq@gmail.com</a>{" "}
+              from your email app.
             </p>
           </div>
           {downloadError && (
@@ -397,7 +400,7 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
             </a>
           </div>
           <p className="email-fallback">
-            Email app didn’t open? Send your downloaded brief to{" "}
+            No email app? Send your downloaded brief to{" "}
             <a href="mailto:automicanhq@gmail.com">automicanhq@gmail.com</a>.
           </p>
         </div>
@@ -405,10 +408,7 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
         <form noValidate onSubmit={submit}>
           <div className="inquiry-notice compact">
             <span className="status-dot" />
-            <p>
-              Your details stay in this tab. You choose when to send your
-              inquiry by email.
-            </p>
+            <p>Review first. Send from your own email app.</p>
           </div>
           <div className="form-columns">
             <Field id="inquiry-intent" label="I want to">
@@ -433,11 +433,7 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
               ))}
             </select>
           </Field>
-          <Field
-            id="inquiry-framework"
-            label="Preferred framework or platform"
-            hint="Not sure? We’ll help choose the right fit."
-          >
+          <Field id="inquiry-framework" label="Preferred framework or platform">
             <select {...controls("framework")}>
               <option>Recommend a framework</option>
               {FRAMEWORKS.map((f) => (
@@ -507,7 +503,6 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
             />
           </Field>
           <div className="dialog-actions">
-            <span>No payment or commitment at this stage.</span>
             <Button type="submit">
               Review inquiry <ArrowRight size={17} />
             </Button>
@@ -539,7 +534,7 @@ export function Inquiry({ initialContext, open, onClose, onStatus }) {
             </>
           ) : (
             <>
-              <span>Your draft stays here when you close this window.</span>
+              <span>Your draft stays in this tab.</span>
               <button
                 className="text-button"
                 onClick={() => setDiscarding(true)}

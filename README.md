@@ -13,7 +13,7 @@ A public AI employee and custom-agent studio for Bangladeshi Companies, Organiza
 
 Twelve everyday roles replace the previous software-department taxonomy: social media, accounting, customer care, digital marketing, sales, HR/admin, e-commerce, inventory, admissions, academic coordination, content creation, and personal assistance. The gallery offers local search, category filtering, URL history and explicit load more.
 
-Avatars share a local SVG construction with role badges, accessories, and four accent families. Hover, keyboard focus or tap opens a role-specific introduction and raises the character's hand. Escape and the close control dismiss it. Reduced motion preserves the static raised pose. Hire and Build actions stay visible outside popups and carry context into the inquiry.
+Avatars share a local SVG construction with role badges, accessories, and four accent families. Compact cards show only the avatar, role, summary and Hire/Build actions. Hover, keyboard focus or tap opens a role-specific introduction and raises the character's hand. Escape, a second tap, an outside tap or focus departure dismiss it; no popup heading, close button or visible Meet me label is used. Reduced motion preserves the static raised pose. Hire and Build actions stay visible outside popups and carry context into the inquiry.
 
 ## Frameworks and interoperability
 
@@ -40,3 +40,7 @@ Opening a draft does not send email. No backend, account, payment, or browser-st
 Browser tests start and stop a local server on port 4175 and retain screenshots, accessibility results and a workflow report in `artifacts/`. Ten workflow groups cover the catalog, greetings, focus, filters/history, role handoffs, framework context, Personal/company validation, draft preservation, email/download and retry, reflow, reduced motion, offline and forced colors. Widths include 320, 390, 520, 720 (200% desktop zoom-equivalent reflow), 768, 950, 1024 and 1440 CSS pixels. Automated accessibility and keyboard checks are not a screen-reader certification; no screen-reader tool is available in this environment.
 
 This repository prepares a static production build; pushing a branch or opening a pull request does not itself merge the changes or alter the live domain.
+
+## Current revision
+
+The simplified layout uses one hero avatar, larger supporting text, compact employee/framework cards and less repeated copy. The user requires explicit approval before another Git pull or pull request.
