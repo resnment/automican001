@@ -15,7 +15,7 @@ for (const [, name, value] of colors.matchAll(
 }
 for (const [token, value] of [
   ["radius-control", "0.75rem"],
-  ["radius-panel", "1.5rem"],
+  ["radius-panel", "1.125rem"],
   ["space-section", "2rem"],
   ["space-page", "2.5rem"],
 ]) {

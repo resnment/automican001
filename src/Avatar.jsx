@@ -1,5 +1,10 @@
-import React, { useId, useRef, useState } from "react";
-import { Hand, X } from "lucide-react";
+import React, {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { RoleIcon } from "./components";
 
 export function Avatar({ agent, className = "" }) {
@@ -257,18 +262,55 @@ export function Avatar({ agent, className = "" }) {
     </svg>
   );
 }
-export function AvatarGreeting({ agent, className = "", hero = false }) {
+export function AvatarGreeting({ agent, className = "" }) {
   const [open, setOpen] = useState(false);
+  const rootRef = useRef(null);
   const triggerRef = useRef(null);
+  const bubbleRef = useRef(null);
   const suppressed = useRef(false);
-  const close = () => {
-    suppressed.current = true;
-    setOpen(false);
-    triggerRef.current?.focus();
-  };
   const id = useId();
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event) => {
+      if (!rootRef.current?.contains(event.target)) {
+        suppressed.current = true;
+        setOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", outside);
+    return () => document.removeEventListener("pointerdown", outside);
+  }, [open]);
+  useLayoutEffect(() => {
+    if (!open) return;
+    const position = () => {
+      const root = rootRef.current,
+        bubble = bubbleRef.current;
+      if (!root || !bubble) return;
+      const anchor = root.getBoundingClientRect();
+      const width = bubble.offsetWidth;
+      const left = Math.max(
+        16,
+        Math.min(
+          anchor.left + anchor.width / 2 - width / 2,
+          window.innerWidth - width - 16,
+        ),
+      );
+      bubble.style.left = `${left - anchor.left}px`;
+      const above = anchor.top >= bubble.offsetHeight + 20;
+      bubble.style.bottom = above ? "calc(100% + 10px)" : "auto";
+      bubble.style.top = above ? "auto" : "calc(100% + 10px)";
+    };
+    position();
+    window.addEventListener("resize", position);
+    window.addEventListener("scroll", position, true);
+    return () => {
+      window.removeEventListener("resize", position);
+      window.removeEventListener("scroll", position, true);
+    };
+  }, [open]);
   return (
     <div
+      ref={rootRef}
       className={`avatar-greeting accent-${agent.accent} ${open ? "is-greeting" : ""} ${className}`}
       onPointerEnter={(e) => {
         if (e.pointerType === "mouse") {
@@ -297,7 +339,9 @@ export function AvatarGreeting({ agent, className = "", hero = false }) {
         if (e.key === "Escape" && open) {
           e.preventDefault();
           e.stopPropagation();
-          close();
+          suppressed.current = true;
+          setOpen(false);
+          triggerRef.current?.focus();
         }
       }}
     >
@@ -307,6 +351,7 @@ export function AvatarGreeting({ agent, className = "", hero = false }) {
         type="button"
         aria-expanded={open}
         aria-controls={id}
+        aria-describedby={open ? id : undefined}
         aria-label={`Meet your ${agent.short}`}
         onClick={() => {
           suppressed.current = false;
@@ -314,27 +359,12 @@ export function AvatarGreeting({ agent, className = "", hero = false }) {
         }}
       >
         <Avatar agent={agent} />
-        <span className="avatar-meet-hint">
-          <Hand size={14} aria-hidden="true" />
-          {hero ? "Say hello" : "Meet me"}
-        </span>
       </button>
-      <div id={id} className="avatar-speech" hidden={!open}>
-        <span className="speech-heading">
-          <span className="speech-spark" aria-hidden="true">
-            ✦
-          </span>{" "}
-          A LITTLE INTRODUCTION{" "}
-          <button
-            type="button"
-            className="speech-close"
-            aria-label={`Close ${agent.short} introduction`}
-            onClick={close}
-          >
-            <X size={15} />
-          </button>
-        </span>
-        <p>{agent.greeting}</p>
+      <div ref={bubbleRef} id={id} className="avatar-speech" hidden={!open}>
+        <p>
+          <span aria-hidden="true">✦ </span>
+          {agent.greeting}
+        </p>
       </div>
     </div>
   );

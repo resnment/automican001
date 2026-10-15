@@ -5,6 +5,7 @@ export const CATEGORIES = [
   "Institutions",
   "Personal",
 ];
+
 export const AGENTS = [
   {
     id: "social-media",
@@ -13,9 +14,7 @@ export const AGENTS = [
     category: "Sales & growth",
     icon: "social",
     accent: "lilac",
-    code: "SM",
-    summary:
-      "Keep your brand present, consistent, and part of the conversation.",
+    summary: "Plan posts, captions, and community replies.",
     greeting:
       "Hi, I’m your AI Social Media Manager. I can help you plan posts, draft Bangla and English captions, and organize your community replies.",
     tasks: [
@@ -33,8 +32,7 @@ export const AGENTS = [
     category: "Business & operations",
     icon: "accounts",
     accent: "gold",
-    code: "AC",
-    summary: "Bring a little more clarity to your numbers and everyday books.",
+    summary: "Organize expenses, invoices, and reconciliation reports.",
     greeting:
       "Hi, I’m your AI Accountant. I can help you organize expenses, draft invoices, and prepare reconciliation reports for your review.",
     tasks: [
@@ -52,8 +50,7 @@ export const AGENTS = [
     category: "Customer experience",
     icon: "support",
     accent: "cyan",
-    code: "CC",
-    summary: "Give every customer conversation a thoughtful first response.",
+    summary: "Answer routine questions and route complex requests.",
     greeting:
       "Hi, I’m your AI Customer Care Executive. I can help answer routine questions in Bangla or English, track requests, and hand complex cases to your team.",
     tasks: [
@@ -71,8 +68,7 @@ export const AGENTS = [
     category: "Sales & growth",
     icon: "marketing",
     accent: "rose",
-    code: "DM",
-    summary: "Connect your next campaign to a clear plan and a real audience.",
+    summary: "Draft campaigns and summarize marketing performance.",
     greeting:
       "Hi, I’m your AI Digital Marketing Executive. I can help you research audiences, draft campaign ideas, and turn performance data into clear reports.",
     tasks: [
@@ -90,8 +86,7 @@ export const AGENTS = [
     category: "Sales & growth",
     icon: "sales",
     accent: "gold",
-    code: "SA",
-    summary: "Keep promising conversations moving toward the next step.",
+    summary: "Organize leads, proposals, and follow-ups.",
     greeting:
       "Hi, I’m your AI Sales Assistant. I can help organize leads, prepare proposals, and draft follow-ups so your team can focus on the conversation.",
     tasks: [
@@ -109,8 +104,7 @@ export const AGENTS = [
     category: "Business & operations",
     icon: "hr",
     accent: "lilac",
-    code: "HR",
-    summary: "Make the paperwork behind a good workplace feel lighter.",
+    summary: "Prepare onboarding checklists and admin documents.",
     greeting:
       "Hi, I’m your AI HR & Admin Assistant. I can help draft job descriptions, organize onboarding checklists, and prepare routine admin documents.",
     tasks: [
@@ -128,8 +122,7 @@ export const AGENTS = [
     category: "Customer experience",
     icon: "commerce",
     accent: "cyan",
-    code: "EC",
-    summary: "Keep listings, orders, and customer updates in one clear flow.",
+    summary: "Organize listings, orders, and delivery updates.",
     greeting:
       "Hi, I’m your AI E-commerce Assistant. I can help write product listings, organize order updates, and prepare delivery follow-ups for your online shop.",
     tasks: [
@@ -147,8 +140,7 @@ export const AGENTS = [
     category: "Business & operations",
     icon: "inventory",
     accent: "gold",
-    code: "IN",
-    summary: "See what is moving, what is low, and what needs attention.",
+    summary: "Track stock and flag items that need attention.",
     greeting:
       "Hi, I’m your AI Inventory Assistant. I can help organize stock records, highlight low-stock items, and prepare purchase-request drafts.",
     tasks: [
@@ -166,9 +158,7 @@ export const AGENTS = [
     category: "Institutions",
     icon: "admissions",
     accent: "lilac",
-    code: "AD",
-    summary:
-      "Give prospective students a clearer path to the right information.",
+    summary: "Answer inquiries and prepare admission checklists.",
     greeting:
       "Hi, I’m your AI Admissions Assistant. I can help explain admission steps, organize inquiry follow-ups, and prepare document checklists.",
     tasks: [
@@ -186,9 +176,7 @@ export const AGENTS = [
     category: "Institutions",
     icon: "academic",
     accent: "cyan",
-    code: "AK",
-    summary:
-      "Bring structure to schedules, notices, and everyday coordination.",
+    summary: "Prepare schedules, notices, and academic reports.",
     greeting:
       "Hi, I’m your AI Academic Coordinator. I can help organize class schedules, draft notices, and prepare routine academic reports.",
     tasks: [
@@ -206,8 +194,7 @@ export const AGENTS = [
     category: "Sales & growth",
     icon: "content",
     accent: "rose",
-    code: "CT",
-    summary: "Turn your ideas into words, briefs, and stories worth sharing.",
+    summary: "Draft Bangla and English content for your channels.",
     greeting:
       "Hi, I’m your AI Content Creator. I can help draft Bangla and English content, shape creative briefs, and adapt your message for different channels.",
     tasks: [
@@ -225,8 +212,7 @@ export const AGENTS = [
     category: "Personal",
     icon: "personal",
     accent: "gold",
-    code: "PA",
-    summary: "A thoughtful extra pair of hands for everything on your list.",
+    summary: "Organize your plans, notes, and everyday messages.",
     greeting:
       "Hi, I’m your AI Personal Assistant. I can help plan your day, organize information, and draft the emails and reminders you keep putting off.",
     tasks: [
@@ -238,74 +224,65 @@ export const AGENTS = [
     scene: "For individuals, busy professionals, students, and founders.",
   },
 ];
+
 export const FRAMEWORKS = [
   {
     name: "OpenAI Agents SDK",
     type: "SDKs & frameworks",
-    short: "OA",
     detail: "Code-first agents, tools, handoffs, and orchestration.",
     url: "https://developers.openai.com/api/docs/guides/agents/sdk",
   },
   {
     name: "Claude Agent SDK",
     type: "SDKs & frameworks",
-    short: "CL",
     detail: "Build agent workflows with Anthropic’s agent harness.",
     url: "https://claude.com/resources/articles/building-agents-with-the-claude-agent-sdk",
   },
   {
     name: "Google ADK",
     type: "SDKs & frameworks",
-    short: "GA",
     detail: "Google’s modular Agent Development Kit.",
     url: "https://adk.dev/",
   },
   {
     name: "LangGraph",
     type: "SDKs & frameworks",
-    short: "LG",
     detail: "Stateful orchestration for long-running agent workflows.",
     url: "https://docs.langchain.com/oss/python/langgraph/overview",
   },
   {
     name: "LangChain",
     type: "SDKs & frameworks",
-    short: "LC",
     detail: "Agent building blocks, models, tools, and integrations.",
     url: "https://docs.langchain.com/oss/python/langchain/overview",
   },
   {
     name: "n8n",
     type: "Workflow automation",
-    short: "n8n",
     detail: "Visual workflow automation with AI agent steps.",
     url: "https://docs.n8n.io/advanced-ai/",
   },
   {
     name: "OpenClaw",
     type: "Agent platforms",
-    short: "OC",
     detail: "Self-hosted assistant and messaging gateway.",
     url: "https://docs.openclaw.ai/",
   },
   {
     name: "Hermes Agent",
     type: "Agent platforms",
-    short: "HE",
     detail: "Nous Research’s extensible, self-hosted agent.",
     url: "https://github.com/NousResearch/hermes-agent",
   },
   {
     name: "CrewAI",
     type: "SDKs & frameworks",
-    short: "CR",
     detail: "Role-based multi-agent teams and flows.",
     url: "https://docs.crewai.com/",
   },
   {
     name: "Microsoft Agent Framework",
     type: "SDKs & frameworks",
-    short: "MS",
     detail:
       "The successor to AutoGen and Semantic Kernel for agent orchestration.",
     url: "https://learn.microsoft.com/en-us/agent-framework/overview/",
@@ -313,47 +290,42 @@ export const FRAMEWORKS = [
   {
     name: "Pydantic AI",
     type: "SDKs & frameworks",
-    short: "PY",
     detail: "Type-driven Python agent applications.",
     url: "https://ai.pydantic.dev/",
   },
   {
     name: "Mastra",
     type: "SDKs & frameworks",
-    short: "MA",
     detail: "TypeScript agents, workflows, memory, and tools.",
     url: "https://mastra.ai/docs",
   },
   {
     name: "Agno",
     type: "SDKs & frameworks",
-    short: "AG",
     detail: "Agents, multi-agent teams, and workflows.",
     url: "https://docs.agno.com/",
   },
   {
     name: "LlamaIndex",
     type: "SDKs & frameworks",
-    short: "LI",
     detail: "Data-connected agents and agent workflows.",
     url: "https://developers.llamaindex.ai/python/framework/module_guides/deploying/agents/",
   },
   {
     name: "smolagents",
     type: "SDKs & frameworks",
-    short: "HF",
     detail: "Hugging Face’s lightweight agent library.",
     url: "https://huggingface.co/docs/smolagents/index",
   },
   {
     name: "ChatGPT dots",
     type: "Agent platforms",
-    short: "•",
     detail:
       "OpenAI’s always-on agent platform; extensions are scoped to available platform capabilities.",
     url: "https://learn.chatgpt.com/docs/dots",
   },
 ];
+
 export const AUDIENCES = [
   "Companies",
   "Organizations",

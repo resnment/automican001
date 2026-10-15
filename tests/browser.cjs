@@ -70,7 +70,7 @@ async function a11y(page, name) {
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await page.goto(base);
-    await page.getByRole("heading", { name: /Your next hire/ }).waitFor();
+    await page.getByRole("heading", { name: /Your next AI hire/ }).waitFor();
     await page.evaluate(() => document.fonts.ready);
     await check(
       "New employee catalog, audience wording, readable type, local assets and accessibility",
@@ -97,7 +97,7 @@ async function a11y(page, name) {
               .filter(
                 (e) =>
                   e.getClientRects().length &&
-                  parseFloat(getComputedStyle(e).fontSize) < 11,
+                  parseFloat(getComputedStyle(e).fontSize) < 14,
               )
               .map((e) => ({
                 text: e.textContent.slice(0, 50),
@@ -114,6 +114,38 @@ async function a11y(page, name) {
         assert.equal(
           await page.evaluate(() => document.fonts.check("500 16px Manrope")),
           true,
+        );
+        for (const phrase of [
+          "A LITTLE INTRODUCTION",
+          "ONE PLATFORM. YOUR KIND OF WORK.",
+          "Meet me",
+          "SM / AI EMPLOYEE",
+        ])
+          assert.equal(
+            await page.getByText(phrase, { exact: true }).count(),
+            0,
+          );
+        assert.equal(await page.locator(".hero-constellation").count(), 0);
+        for (const card of await page.locator(".employee-card").all())
+          assert.ok(
+            (await card.boundingBox()).height <= 340,
+            "Employee cards stay compact",
+          );
+        for (const card of await page.locator(".framework-card").all())
+          assert.ok(
+            (await card.boundingBox()).height <= 120,
+            "Framework cards have no padded empty rows",
+          );
+        const buttonSizes = await page.locator(".button").evaluateAll((nodes) =>
+          nodes
+            .filter((el) => el.getClientRects().length)
+            .map((el) => ({
+              font: getComputedStyle(el).fontSize,
+              height: el.getBoundingClientRect().height,
+            })),
+        );
+        assert.ok(
+          buttonSizes.every((x) => x.font === "15px" && x.height >= 44),
         );
         await a11y(page, "desktop");
         await page.screenshot({
@@ -139,14 +171,12 @@ async function a11y(page, name) {
           const t = getComputedStyle(el).transform;
           return t !== "none" && !t.startsWith("matrix(1,");
         });
+        assert.equal(await owner.locator(".avatar-speech button").count(), 0);
         await owner.locator(".avatar-speech").hover();
         assert.equal(await trigger.getAttribute("aria-expanded"), "true");
         await page.screenshot({ path: "artifacts/avatar-greeting.png" });
-        await owner
-          .getByRole("button", {
-            name: "Close Social Media Manager introduction",
-          })
-          .click();
+        await trigger.focus();
+        await page.keyboard.press("Escape");
         assert.equal(await trigger.getAttribute("aria-expanded"), "false");
         assert.equal(
           await trigger.evaluate((el) => el === document.activeElement),
@@ -324,12 +354,8 @@ async function a11y(page, name) {
         assert.equal(await dialog.isVisible(), true);
         await page.keyboard.press("Escape");
         assert.match(
-          await page.locator(".protocols").innerText(),
-          /Agent ↔ Agent/,
-        );
-        assert.match(
-          await page.locator(".protocols").innerText(),
-          /Agent ↔ Tools & data/,
+          await page.locator(".connection-note").innerText(),
+          /Connect agents with A2A and tools with MCP/,
         );
       },
     );
@@ -522,10 +548,24 @@ async function a11y(page, name) {
             true,
             `No whole-page horizontal overflow at ${width}px`,
           );
+          const sizes = await page.locator(".button").evaluateAll((nodes) =>
+            nodes
+              .filter((el) => el.getClientRects().length)
+              .map((el) => ({
+                font: getComputedStyle(el).fontSize,
+                height: el.getBoundingClientRect().height,
+              })),
+          );
+          assert.ok(
+            sizes.every((x) => x.font === "15px" && x.height >= 44),
+            `Consistent action typography and target size at ${width}px`,
+          );
         }
         await page.setViewportSize({ width: 390, height: 844 });
         await page.goto(base);
-        await page.getByRole("heading", { name: /Your next hire/ }).waitFor();
+        await page
+          .getByRole("heading", { name: /Your next AI hire/ })
+          .waitFor();
         await page.evaluate(() => document.fonts.ready);
         await page.getByRole("button", { name: "Open navigation" }).click();
         assert.equal(await page.locator(".main-nav").isVisible(), true);
@@ -536,9 +576,7 @@ async function a11y(page, name) {
             .evaluate((el) => el === document.activeElement),
           true,
         );
-        await page
-          .getByText("Can I get an agent for personal use?", { exact: true })
-          .click();
+        await page.getByText("Hire or Build?", { exact: true }).click();
         await a11y(page, "mobile");
         await page.screenshot({ path: "artifacts/mobile.png", fullPage: true });
         await page
@@ -573,7 +611,9 @@ async function a11y(page, name) {
         });
         const mobile = await touch.newPage();
         await mobile.goto(base);
-        await mobile.getByRole("heading", { name: /Your next hire/ }).waitFor();
+        await mobile
+          .getByRole("heading", { name: /Your next AI hire/ })
+          .waitFor();
         const owner = mobile
           .locator(".employee-card")
           .first()
@@ -586,14 +626,21 @@ async function a11y(page, name) {
           rect.x >= 0 && rect.x + rect.width <= 390,
           "Touch speech bubble fits the viewport",
         );
-        await owner
-          .getByRole("button", {
-            name: "Close Social Media Manager introduction",
-          })
+        await owner.locator(".avatar-trigger").tap();
+        assert.equal(
+          await owner.locator(".avatar-trigger").getAttribute("aria-expanded"),
+          "false",
+        );
+        await owner.locator(".avatar-trigger").tap();
+        await mobile
+          .locator(".employee-card")
+          .first()
+          .locator(".employee-summary")
           .tap();
         assert.equal(
           await owner.locator(".avatar-trigger").getAttribute("aria-expanded"),
           "false",
+          "Outside tap dismisses a greeting without a close button",
         );
         await mobile.emulateMedia({ reducedMotion: "reduce" });
         await owner.locator(".avatar-trigger").tap();
