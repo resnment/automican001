@@ -1,0 +1,16 @@
+{
+  "profile": "marketing-interactive",
+  "sourceRoots": ["src"],
+  "locale": "en-US",
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": ["Select/Listbox", "Form", "Scrollbar", "Toast"],
+  "ownership": { "Select/Listbox": "native" },
+  "requiredCommands": ["build", "browser", "tokens", "format"],
+  "commands": {
+    "build": "npm run build",
+    "browser": "npm run test:browser",
+    "tokens": "npm run verify:design",
+    "format": "npm run format:check"
+  },
+  "evidence": { "failurePaths": "tests/browser.cjs" }
+}

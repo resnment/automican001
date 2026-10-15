@@ -6,17 +6,32 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint src scripts/*.mjs tests/*.cjs",
+    "format": "prettier --write src index.html DESIGN.md UX-CONTRACT.md premium-ui.json package.json eslint.config.js scripts/*.mjs tests/*.cjs",
+    "format:check": "prettier --check src index.html DESIGN.md UX-CONTRACT.md premium-ui.json package.json eslint.config.js scripts/*.mjs tests/*.cjs",
+    "verify:design": "node scripts/verify-design.mjs",
+    "test:browser": "node tests/browser.cjs"
   },
   "dependencies": {
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^9.39.5",
     "@vitejs/plugin-react": "^4.6.0",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.13.0",
+    "playwright": "^1.64.1",
     "postcss": "^8.5.6",
+    "prettier": "^3.9.10",
     "tailwindcss": "^3.4.17",
     "vite": "^7.0.6"
   }

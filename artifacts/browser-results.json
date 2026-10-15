@@ -1,0 +1,34 @@
+{
+  "passed": 7,
+  "checks": [
+    {
+      "name": "Landing content, local fonts, scrollbar, links and desktop accessibility",
+      "passed": true
+    },
+    {
+      "name": "Team details: keyboard focus, native dialog trap, Escape and restoration",
+      "passed": true
+    },
+    {
+      "name": "Role explorer: search, IME, clear, no-results, native filter, paging and history",
+      "passed": true
+    },
+    {
+      "name": "Detail-to-inquiry handoff, validation, label association and draft preservation",
+      "passed": true
+    },
+    {
+      "name": "Inquiry email recipient, encoded values, file download and failure/retry",
+      "passed": true
+    },
+    {
+      "name": "Phone: reflow, topology separation, menu Escape, FAQ and modal access",
+      "passed": true
+    },
+    {
+      "name": "Offline local workflow, reduced motion and invalid URL recovery",
+      "passed": true
+    }
+  ],
+  "runtimeErrors": []
+}
