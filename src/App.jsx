@@ -1,486 +1,600 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Compass,
-  Code2,
-  TrendingUp,
   ArrowUpRight,
   ArrowRight,
-  Plus,
-  Minus,
-  Network,
-  Sparkles,
-  ShieldCheck,
-  Workflow,
-  Building2,
-  Landmark,
-  Users,
-  ChevronRight,
-  ChevronLeft,
   Search,
   X,
-  ArrowDown,
+  Plus,
   Menu,
-  Layers3,
+  Network,
+  ShieldCheck,
+  Sparkles,
+  Building2,
+  Users,
+  Landmark,
+  UserRound,
   Check,
+  Orbit,
+  Workflow,
+  Radio,
+  ChevronDown,
+  ExternalLink,
 } from "lucide-react";
-import { AGENTS, DEPARTMENTS } from "./data";
-import {
-  Button,
-  DepartmentIcon,
-  Dialog,
-  TeamDetail,
-  Inquiry,
-  Status,
-} from "./components";
+import { AGENTS, CATEGORIES, FRAMEWORKS, AUDIENCES } from "./data";
+import { Button, Dialog, Inquiry, Status } from "./components";
+import { Avatar, AvatarGreeting } from "./Avatar";
 
-const TEAM_COPY = {
-  Origin: {
-    category: "RESEARCH & STRATEGY",
-    headline: "Find your next big move.",
-    description:
-      "From a first idea to a clear direction. Put research, analysis, and strategy on the same team.",
-    tags: ["Research", "Market intelligence", "Strategy"],
-    result: "A clear plan to move forward.",
-  },
-  Development: {
-    category: "PRODUCT & ENGINEERING",
-    headline: "Turn ambition into a build.",
-    description:
-      "Bring product, design, engineering, and quality together to take your idea further.",
-    tags: ["Product", "Design", "Engineering"],
-    result: "One team from brief to delivery.",
-  },
-  Growth: {
-    category: "MARKETING & REACH",
-    headline: "Give your growth a team.",
-    description:
-      "Connect the dots between your audience, your content, and your next campaign.",
-    tags: ["Content", "Campaigns", "Discovery"],
-    result: "A more connected growth effort.",
-  },
-  Revenue: {
-    category: "SALES & OPERATIONS",
-    headline: "Keep business moving.",
-    description:
-      "Bring sales, finance, and everyday operations into one coordinated workflow.",
-    tags: ["Sales", "Operations", "Finance"],
-    result: "Less friction. More forward motion.",
-  },
-};
+const AUDIENCE_ICONS = [Building2, Users, Landmark, UserRound];
+const FRAMEWORK_TYPES = [
+  "All",
+  "SDKs & frameworks",
+  "Agent platforms",
+  "Workflow automation",
+];
 const FAQS = [
   [
-    "What is an AI agent swarm?",
-    "A swarm is a group of specialized AI agents working toward a shared goal. Instead of asking a single assistant to do everything, a coordinating agent connects roles such as researcher, designer, engineer, and analyst. People define the goals and decide the scope of the work.",
+    "What is an AI employee?",
+    "An AI employee is an agent configured for a specific role, such as accounting support, customer care, or social media. You define the job, provide approved knowledge, and agree on tools and review checkpoints. It supports your people; it does not independently become an authorized member of your company.",
   ],
   [
-    "Can I hire a team or just one agent?",
-    "You can start with a specialized role, explore a department team, or discuss a custom combination. Choose a team above to see its roles, then prepare an inquiry describing the work you need help with. The final team and engagement are agreed before work begins.",
+    "What is the difference between Hire and Build?",
+    "Hire starts a conversation about one of the roles in our employee catalog. Build starts with your own workflow, tools, preferred framework, or a custom combination of roles. Both begin with scoping; clicking either button does not start a paid engagement.",
   ],
   [
-    "Can you build for my organization’s workflow?",
-    "Custom builds can be scoped for offices, companies, organizations, and institutions. Tell us about your current process, the tools you use, and the result you want. Integrations, access requirements, oversight, and rollout are part of that scoping conversation.",
+    "Can my AI employee work in Bangla and English?",
+    "Bangla and English can be part of your brief, including terminology, tone, and mixed-language workflows. We agree on the language requirements and validate representative examples before rollout. Model choice and source information affect the final result.",
   ],
   [
-    "How are pricing and timelines decided?",
-    "Pricing and timelines depend on the agreed roles, workflow complexity, integrations, and support needs. Start with a brief so the engagement can be scoped. This site does not collect payments or automatically begin a paid engagement.",
+    "Can agents built with different frameworks work together?",
+    "Yes, cross-framework collaboration can be designed around supported APIs, Agent2Agent (A2A) for agent communication, and Model Context Protocol (MCP) for tools and data. Each connection still needs compatible capabilities, access permissions, and integration testing. A listed framework is a build option, not a claim that every combination already works.",
+  ],
+  [
+    "Can I get an agent for personal use?",
+    "Yes. Choose Personal in your inquiry. You can start with planning, notes, research organization, or drafting everyday messages. An organization name is optional for personal inquiries.",
+  ],
+  [
+    "How do pricing, access, and approvals work?",
+    "Pricing and timelines follow the agreed scope. We define the tools, access, and human approvals before rollout. Payments, budgets, publishing, hiring decisions, academic decisions, and other consequential actions stay subject to the approvals agreed for your workflow.",
   ],
 ];
-function Brand({ footer = false }) {
+function Brand() {
   return (
-    <a
-      className={`brand ${footer ? "footer-brand" : ""}`}
-      href="#top"
-      aria-label="Automican home"
-    >
-      <span className="brand-mark" aria-hidden="true">
-        <Network size={25} strokeWidth={1.65} />
+    <a className="brand" href="#top" aria-label="Automican home">
+      <span className="brand-mark">
+        <Network size={25} aria-hidden="true" />
       </span>
-      automican<span className="brand-period">.</span>
+      automican<span>.</span>
     </a>
   );
 }
-function SwarmMap({ onTeam }) {
+function HeroConstellation() {
   return (
     <div
-      className="swarm-map"
-      aria-label="Four departments coordinated by one orchestrator"
+      className="hero-constellation"
+      aria-label="Illustrated AI employees with a social media manager introduction"
     >
-      <div className="map-topline">
-        <span>
-          <span className="status-dot" />
-          THE SWARM, IN SYNC
+      <div className="constellation-heading">
+        <span className="eyebrow">THE NEXT KIND OF TEAMMATE</span>
+        <span className="constellation-spark" aria-hidden="true">
+          ✦
         </span>
-        <span>30 SPECIALIST ROLES</span>
       </div>
-      <div className="network-canvas">
-        <svg
-          className="network-lines"
-          viewBox="0 0 600 470"
-          fill="none"
-          aria-hidden="true"
-        >
-          <circle cx="300" cy="234" r="89" className="orbit-inner" />
-          <circle cx="300" cy="234" r="164" className="orbit-outer" />
-          <path
-            d="M300 234L119 100M300 234L489 117M300 234L111 350M300 234L477 363"
-            className="network-path"
-          />
-          <path
-            d="M119 100Q300 -35 489 117M489 117Q622 234 477 363M477 363Q300 490 111 350M111 350Q-9 234 119 100"
-            className="network-path faint"
-          />
-          <circle cx="300" cy="70" r="4" className="signal-dot" />
-          <circle cx="465" cy="234" r="4" className="signal-dot" />
-          <circle cx="300" cy="398" r="4" className="signal-dot" />
-          <circle cx="135" cy="234" r="4" className="signal-dot" />
-        </svg>
-        <div className="orchestrator">
-          <div className="orchestrator-icon">
-            <Network size={35} strokeWidth={1.25} aria-hidden="true" />
-          </div>
-          <strong>
-            One shared
-            <br />
-            intelligence.
-          </strong>
-          <span>THE ORCHESTRATOR</span>
+      <svg
+        className="constellation-orbits"
+        viewBox="0 0 600 620"
+        fill="none"
+        aria-hidden="true"
+      >
+        <ellipse
+          cx="307"
+          cy="350"
+          rx="258"
+          ry="132"
+          transform="rotate(-28 307 350)"
+        />
+        <ellipse
+          cx="307"
+          cy="350"
+          rx="210"
+          ry="241"
+          transform="rotate(25 307 350)"
+        />
+        <path d="M76 399L289 324 507 404M289 324V112" />
+        <circle cx="289" cy="112" r="4" />
+        <circle cx="76" cy="399" r="4" />
+        <circle cx="507" cy="404" r="4" />
+      </svg>
+      <span className="constellation-note">
+        <span />
+        DESIGNED TO WORK WITH YOU
+      </span>
+      <div className="hero-mini mini-accountant accent-gold">
+        <Avatar agent={AGENTS[1]} />
+        <div>
+          <span className="mini-code">AC / FINANCE</span>
+          <strong>Accountant</strong>
         </div>
-        {DEPARTMENTS.map((d, i) => (
-          <button
-            key={d}
-            className={`map-node map-node-${i} tone-${d.toLowerCase()}`}
-            onClick={() => onTeam(d)}
-            aria-label={`Explore the ${d} team`}
-          >
-            <DepartmentIcon department={d} />
-            <div>
-              <strong>{d}</strong>
-              <span>
-                {AGENTS.filter((a) => a.department === d).length} specialist
-                roles
-              </span>
-            </div>
-            <ArrowUpRight size={13} aria-hidden="true" />
-          </button>
-        ))}
-        <span className="map-label label-left">HUMAN DIRECTION</span>
-        <span className="map-label label-right">COLLECTIVE EXECUTION</span>
       </div>
-      <div className="map-bottomline">
+      <AvatarGreeting agent={AGENTS[0]} className="hero-avatar" hero />
+      <div className="hero-role-label">
+        <span className="label-spark" aria-hidden="true">
+          ✦
+        </span>
+        <div>
+          <span>MEET YOUR NEXT HIRE</span>
+          <strong>AI Social Media Manager</strong>
+        </div>
+        <ArrowUpRight size={19} aria-hidden="true" />
+      </div>
+      <div className="hero-mini mini-support accent-cyan">
+        <Avatar agent={AGENTS[2]} />
+        <div>
+          <span className="mini-code">CC / EXPERIENCE</span>
+          <strong>Customer Care</strong>
+        </div>
+      </div>
+      <div className="constellation-footer">
         <span>
-          <Layers3 size={14} aria-hidden="true" /> Specialized individually.
-          Aligned collectively.
+          <HandHint />
+          Hover, focus, or tap to say hello.
         </span>
-        <span className="map-cross" aria-hidden="true">
-          +
-        </span>
+        <span>HUMAN-LED. AI-ENABLED.</span>
       </div>
     </div>
   );
 }
-function Registry({ onAgent }) {
+function HandHint() {
+  return <Sparkles size={15} aria-hidden="true" />;
+}
+function EmployeeCard({ agent, onDetails, onInquiry }) {
+  return (
+    <article
+      id={`employee-${agent.id}`}
+      className={`employee-card accent-${agent.accent}`}
+    >
+      <div className="employee-card-top">
+        <span className="employee-code">
+          {agent.code} <span>/ AI EMPLOYEE</span>
+        </span>
+        <button
+          className="icon-button"
+          aria-label={`View ${agent.short} details`}
+          onClick={() => onDetails(agent)}
+        >
+          <ArrowUpRight size={20} />
+        </button>
+      </div>
+      <AvatarGreeting agent={agent} />
+      <div className="employee-card-content">
+        <span className="role-category">{agent.category}</span>
+        <h3>{agent.short}</h3>
+        <p>{agent.summary}</p>
+        <div className="role-skills">
+          {agent.tools.map((t) => (
+            <span key={t}>{t}</span>
+          ))}
+        </div>
+      </div>
+      <div className="employee-card-actions">
+        <Button
+          onClick={() =>
+            onInquiry({
+              intent: "Hire",
+              role: agent.designation,
+              audience: agent.category === "Personal" ? "Personal" : undefined,
+            })
+          }
+          aria-label={`Hire ${agent.short}`}
+        >
+          Hire <ArrowUpRight size={16} />
+        </Button>
+        <Button
+          emphasis="outline"
+          intent="neutral"
+          onClick={() =>
+            onInquiry({
+              intent: "Build",
+              role: agent.designation,
+              audience: agent.category === "Personal" ? "Personal" : undefined,
+            })
+          }
+          aria-label={`Build ${agent.short}`}
+        >
+          Build <Plus size={16} />
+        </Button>
+      </div>
+    </article>
+  );
+}
+function EmployeeExplorer({ onDetails, onInquiry }) {
   const read = () => {
     const p = new URLSearchParams(location.search);
     return {
       query: p.get("q") || "",
-      department:
-        DEPARTMENTS.includes(p.get("department")) ||
-        p.get("department") === "System"
-          ? p.get("department")
-          : "",
-      page: Math.max(1, Number.parseInt(p.get("page") || "1") || 1),
-      sort: p.get("sort") === "desc" ? "desc" : "asc",
+      category: CATEGORIES.includes(p.get("category"))
+        ? p.get("category")
+        : "All",
+      shown: Math.min(12, Math.max(6, Number.parseInt(p.get("shown")) || 6)),
     };
   };
   const [state, setState] = useState(read);
-  const [draftQuery, setDraftQuery] = useState(state.query);
-  const [expanded, setExpanded] = useState(() => Boolean(location.search));
+  const [query, setQuery] = useState(state.query);
   const composing = useRef(false);
-  const searchRef = useRef(null);
+  const nextEmployeeFocus = useRef(null);
+  const inputRef = useRef(null);
   const update = (patch, replace = false) => {
     const next = { ...state, ...patch };
     const url = new URL(location.href);
-    for (const [key, param] of [
-      ["query", "q"],
-      ["department", "department"],
-      ["page", "page"],
-      ["sort", "sort"],
+    for (const [key, param, fallback] of [
+      ["query", "q", ""],
+      ["category", "category", "All"],
+      ["shown", "shown", 6],
     ]) {
-      if (
-        next[key] &&
-        next[key] !== 1 &&
-        !(key === "sort" && next[key] === "asc")
-      )
-        url.searchParams.set(param, next[key]);
-      else url.searchParams.delete(param);
+      if (next[key] === fallback) url.searchParams.delete(param);
+      else url.searchParams.set(param, next[key]);
     }
     history[replace ? "replaceState" : "pushState"]({}, "", url);
     setState(next);
   };
   useEffect(() => {
-    const restore = () => {
+    const pop = () => {
       const next = read();
       setState(next);
-      setDraftQuery(next.query);
-      if (location.search) setExpanded(true);
+      setQuery(next.query);
     };
-    window.addEventListener("popstate", restore);
-    return () => window.removeEventListener("popstate", restore);
+    window.addEventListener("popstate", pop);
+    return () => window.removeEventListener("popstate", pop);
   }, []);
-  const filtered = AGENTS.filter(
+  const matched = AGENTS.filter(
     (a) =>
-      (!state.department || a.department === state.department) &&
-      `${a.designation} ${a.role} ${a.department}`
-        .toLowerCase()
-        .includes(state.query.toLowerCase()),
-  ).sort(
-    (a, b) =>
-      a.designation.localeCompare(b.designation, "en-US") *
-      (state.sort === "asc" ? 1 : -1),
+      (state.category === "All" || a.category === state.category) &&
+      `${a.designation} ${a.summary} ${a.tools.join(" ")} ${a.tasks.join(" ")}`
+        .toLocaleLowerCase("en-US")
+        .includes(state.query.toLocaleLowerCase("en-US")),
   );
-  const pages = Math.max(1, Math.ceil(filtered.length / 5));
-  const page = Math.min(state.page, pages);
   useEffect(() => {
-    if (state.page > pages) update({ page: pages }, true);
-  }, [pages, state.page]);
+    if (!nextEmployeeFocus.current) return;
+    document
+      .querySelector(`#employee-${nextEmployeeFocus.current} .avatar-trigger`)
+      ?.focus();
+    nextEmployeeFocus.current = null;
+  }, [state.shown]);
   const clear = () => {
-    setDraftQuery("");
-    update({ query: "", page: 1 });
-    searchRef.current?.focus();
+    setQuery("");
+    update({ query: "", category: "All", shown: 6 });
+    inputRef.current?.focus();
   };
   return (
-    <div className="registry">
-      <button
-        className="registry-toggle"
-        aria-expanded={expanded}
-        aria-controls="registry-content"
-        onClick={() => setExpanded((v) => !v)}
-      >
-        <span>
-          <Network size={20} aria-hidden="true" />
-          <strong>Meet every specialist in the swarm</strong>
-          <span className="count-badge">30 roles</span>
+    <section
+      className="employees-section container section-space"
+      id="employees"
+    >
+      <div className="section-heading">
+        <div>
+          <span className="eyebrow">REAL ROLES. EXTRAORDINARY TEAMMATES.</span>
+          <h2>
+            Good people deserve
+            <br />
+            <span>great AI colleagues.</span>
+          </h2>
+        </div>
+        <p>
+          Meet the specialists for the work you do every day. Hire a role. Build
+          it around your workflow. Bring a whole team together.
+        </p>
+      </div>
+      <div className="employee-toolbar">
+        <div className="search-field">
+          <Search size={19} aria-hidden="true" />
+          <input
+            ref={inputRef}
+            type="search"
+            aria-label="Search AI employees"
+            placeholder="Find your next AI employee…"
+            value={query}
+            onCompositionStart={() => {
+              composing.current = true;
+            }}
+            onCompositionEnd={(e) => {
+              composing.current = false;
+              update({ query: e.currentTarget.value, shown: 6 }, true);
+            }}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (!composing.current)
+                update({ query: e.target.value, shown: 6 }, true);
+            }}
+          />
+          {query && (
+            <button
+              className="icon-button"
+              aria-label="Clear employee search"
+              onClick={() => {
+                setQuery("");
+                update({ query: "", shown: 6 }, true);
+                inputRef.current?.focus();
+              }}
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+        <span className="result-count" role="status">
+          {matched.length} {matched.length === 1 ? "employee" : "employees"} to
+          meet
         </span>
-        {expanded ? (
-          <Minus size={20} aria-hidden="true" />
-        ) : (
-          <Plus size={20} aria-hidden="true" />
+      </div>
+      <div
+        className="filter-list"
+        role="group"
+        aria-label="Employee categories"
+      >
+        {["All", ...CATEGORIES].map((c) => (
+          <button
+            key={c}
+            className={state.category === c ? "active" : ""}
+            aria-pressed={state.category === c}
+            onClick={() => update({ category: c, shown: 6 })}
+          >
+            {c === "All" ? "All employees" : c}
+          </button>
+        ))}
+      </div>
+      <div className="employee-grid">
+        {matched.slice(0, state.shown).map((a) => (
+          <EmployeeCard
+            key={a.id}
+            agent={a}
+            onDetails={onDetails}
+            onInquiry={onInquiry}
+          />
+        ))}
+      </div>
+      {!matched.length && (
+        <div className="no-results">
+          <Search size={30} aria-hidden="true" />
+          <h3>No employees found</h3>
+          <p>
+            Try a role like accountant, customer care, or personal assistant.
+          </p>
+          <Button emphasis="outline" intent="neutral" onClick={clear}>
+            Clear filters
+          </Button>
+        </div>
+      )}
+      <div className="employee-gallery-footer">
+        <span>
+          Role previews are illustrative. We agree on capabilities and tools
+          with you.
+        </span>
+        {matched.length > state.shown && (
+          <Button
+            emphasis="outline"
+            intent="neutral"
+            onClick={() => {
+              nextEmployeeFocus.current = matched[state.shown]?.id;
+              update({ shown: 12 });
+            }}
+          >
+            Meet all {matched.length} employees <ChevronDown size={17} />
+          </Button>
         )}
-      </button>
-      <div id="registry-content" hidden={!expanded}>
-        <div className="registry-toolbar">
-          <div className="search-field">
-            <Search size={17} aria-hidden="true" />
-            <input
-              type="search"
-              aria-label="Search agent roles"
-              placeholder="Find a role or capability…"
-              ref={searchRef}
-              value={draftQuery}
-              onCompositionStart={() => {
-                composing.current = true;
+      </div>
+    </section>
+  );
+}
+function FrameworkSection({ onInquiry }) {
+  const [expanded, setExpanded] = useState(false);
+  const [type, setType] = useState("All");
+  const frameworks = FRAMEWORKS.filter(
+    (f) => type === "All" || f.type === type,
+  );
+  return (
+    <section
+      className="framework-section container section-space"
+      id="frameworks"
+    >
+      <div className="section-heading">
+        <div>
+          <span className="eyebrow">YOUR FRAMEWORK. YOUR FREEDOM.</span>
+          <h2>
+            Different engines.
+            <br />
+            <span>One shared ambition.</span>
+          </h2>
+        </div>
+        <p>
+          Build with your preferred framework or agent platform. We shape the
+          architecture around your team, your tools, and the way you work.
+        </p>
+      </div>
+      <div className="framework-heading">
+        <div
+          className="framework-filters"
+          role="group"
+          aria-label="Framework types"
+        >
+          {FRAMEWORK_TYPES.map((t) => (
+            <button
+              key={t}
+              aria-pressed={type === t}
+              className={type === t ? "active" : ""}
+              onClick={() => {
+                setType(t);
+                setExpanded(false);
               }}
-              onCompositionEnd={(e) => {
-                composing.current = false;
-                update({ query: e.currentTarget.value, page: 1 }, true);
-              }}
-              onChange={(e) => {
-                setDraftQuery(e.target.value);
-                if (!composing.current)
-                  update({ query: e.target.value, page: 1 }, true);
-              }}
-            />
-            {draftQuery && (
-              <button
-                className="icon-button"
-                onClick={clear}
-                aria-label="Clear search"
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <span className="research-date">RESEARCHED 15 OCT 2026</span>
+      </div>
+      <div className="framework-grid">
+        {frameworks.slice(0, expanded ? frameworks.length : 8).map((f) => (
+          <article className="framework-card" key={f.name}>
+            <div className="framework-mark" aria-hidden="true">
+              {f.short}
+            </div>
+            <div>
+              <h3>{f.name}</h3>
+              <p>{f.detail}</p>
+            </div>
+            <div className="framework-actions">
+              <a
+                href={f.url}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${f.name} official documentation (opens in new tab)`}
               >
-                <X size={16} />
+                Docs <ExternalLink size={13} aria-hidden="true" />
+              </a>
+              <button
+                onClick={() =>
+                  onInquiry({
+                    intent: "Build",
+                    role: "Custom AI employee",
+                    framework: f.name,
+                  })
+                }
+                aria-label={`Build with ${f.name}`}
+              >
+                Build <ArrowUpRight size={14} aria-hidden="true" />
               </button>
-            )}
-          </div>
-          <label className="filter-select">
-            <span className="sr-only">Filter by department</span>
-            <select
-              value={state.department}
-              onChange={(e) => update({ department: e.target.value, page: 1 })}
-            >
-              <option value="">All departments</option>
-              <option>System</option>
-              {DEPARTMENTS.map((d) => (
-                <option key={d}>{d}</option>
-              ))}
-            </select>
-          </label>
+            </div>
+          </article>
+        ))}
+      </div>
+      {frameworks.length > 8 && (
+        <button
+          className="framework-expand text-button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded
+            ? "Show fewer options"
+            : `Explore all ${frameworks.length} options`}
+          <ChevronDown
+            className={expanded ? "rotated" : ""}
+            size={17}
+            aria-hidden="true"
+          />
+        </button>
+      )}
+      <div className="interoperability">
+        <div>
+          <span className="eyebrow">THE CONNECTION LAYER</span>
+          <h3>
+            Independent agents.
+            <br />
+            Connected possibilities.
+          </h3>
+          <p>
+            Agents don’t have to share a framework to share a goal. We design
+            the connections and verify each integration before rollout.
+          </p>
         </div>
-        <div className="table-scroll">
-          <table>
-            <caption className="sr-only">
-              Automican agent roles and capabilities
-            </caption>
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  aria-sort={state.sort === "asc" ? "ascending" : "descending"}
-                >
-                  <button
-                    className="sort-button"
-                    onClick={() =>
-                      update({
-                        sort: state.sort === "asc" ? "desc" : "asc",
-                        page: 1,
-                      })
-                    }
-                  >
-                    Agent role{" "}
-                    <ArrowDown
-                      size={13}
-                      className={state.sort === "desc" ? "rotated" : ""}
-                      aria-hidden="true"
-                    />
-                  </button>
-                </th>
-                <th scope="col">Department</th>
-                <th scope="col">Capabilities</th>
-                <th scope="col">
-                  <span className="sr-only">Details</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.slice((page - 1) * 5, page * 5).map((a) => (
-                <tr key={a.designation}>
-                  <td>
-                    <button className="agent-name" onClick={() => onAgent(a)}>
-                      {a.designation}
-                    </button>
-                  </td>
-                  <td>
-                    <span
-                      className={`department-label tone-${a.department.toLowerCase()}`}
-                    >
-                      <span />
-                      {a.department}
-                    </span>
-                  </td>
-                  <td className="capability-cell">{a.role}</td>
-                  <td>
-                    <button
-                      className="icon-button"
-                      onClick={() => onAgent(a)}
-                      aria-label={`View ${a.designation}`}
-                    >
-                      <ArrowUpRight size={17} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {!filtered.length && (
-                <tr>
-                  <td colSpan={4}>
-                    <div className="no-results">
-                      <Search size={25} aria-hidden="true" />
-                      <strong>No matching roles</strong>
-                      <p>Try another capability or clear your filters.</p>
-                      <Button
-                        emphasis="outline"
-                        intent="neutral"
-                        onClick={() => {
-                          setDraftQuery("");
-                          update({ query: "", department: "", page: 1 });
-                          searchRef.current?.focus();
-                        }}
-                      >
-                        Clear filters
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="table-footer">
-          <span role="status">
-            {filtered.length
-              ? `${(page - 1) * 5 + 1}–${Math.min(page * 5, filtered.length)} of ${filtered.length} roles`
-              : "0 roles"}
-          </span>
-          <nav aria-label="Agent registry pages">
-            <button
-              className="icon-button"
-              disabled={page === 1}
-              onClick={() => update({ page: page - 1 })}
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <span>
-              Page {page} of {pages}
+        <div className="protocols">
+          <a
+            href="https://a2a-protocol.org/latest/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span className="protocol-icon">
+              <Radio size={24} aria-hidden="true" />
             </span>
-            <button
-              className="icon-button"
-              disabled={page === pages}
-              onClick={() => update({ page: page + 1 })}
-              aria-label="Next page"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </nav>
+            <span>
+              <strong>
+                A2A <span>Agent ↔ Agent</span>
+              </strong>
+              <span>
+                Discover, delegate, and exchange results across compatible
+                agents.
+              </span>
+            </span>
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+          <a
+            href="https://modelcontextprotocol.io/docs/getting-started/intro"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span className="protocol-icon">
+              <Workflow size={24} aria-hidden="true" />
+            </span>
+            <span>
+              <strong>
+                MCP <span>Agent ↔ Tools & data</span>
+              </strong>
+              <span>
+                Connect agents to your systems through supported tools and
+                resources.
+              </span>
+            </span>
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
         </div>
       </div>
-    </div>
+      <p className="framework-footnote">
+        Frameworks and platforms are build options, not partner endorsements.
+        Cross-framework connections depend on supported APIs, protocols,
+        permissions, and testing. Have another stack?{" "}
+        <button
+          className="text-button"
+          onClick={() =>
+            onInquiry({
+              intent: "Build",
+              framework: "Other / my existing setup",
+            })
+          }
+        >
+          Tell us about it <ArrowUpRight size={15} aria-hidden="true" />
+        </button>
+      </p>
+    </section>
   );
 }
 export default function App() {
   const [detail, setDetail] = useState(null);
-  const [agent, setAgent] = useState(null);
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [initialTeam, setInitialTeam] = useState("Custom team");
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [context, setContext] = useState({ intent: "Build" });
   const [status, setStatus] = useState("");
-  const inquiryTrigger = useRef(null);
-  const detailTrigger = useRef(null);
-  const menuRef = useRef(null);
-  const openDetail = (team) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const menuRef = useRef(null),
+    detailTrigger = useRef(null),
+    inquiryTrigger = useRef(null);
+  const openDetails = (agent) => {
     detailTrigger.current = document.activeElement;
-    setDetail(team);
+    setDetail(agent);
   };
-  const openAgent = (role) => {
-    detailTrigger.current = document.activeElement;
-    setAgent(role);
-  };
-  useEffect(() => {
-    if (!mobileOpen) return;
-    const escape = (e) => {
-      if (e.key === "Escape") {
-        setMobileOpen(false);
-        menuRef.current?.focus();
-      }
-    };
-    document.addEventListener("keydown", escape);
-    return () => document.removeEventListener("keydown", escape);
-  }, [mobileOpen]);
-  const hire = (team = "Custom team", role = null) => {
+  const openInquiry = (next = { intent: "Build" }) => {
     inquiryTrigger.current = document.activeElement.closest("dialog")
       ? detailTrigger.current
       : document.activeElement;
-    setInitialTeam(role || (team === "Custom team" ? team : `${team} team`));
+    setContext(next);
     setDetail(null);
-    setAgent(null);
     setInquiryOpen(true);
     setMobileOpen(false);
   };
   useEffect(() => {
-    document.title = "Automican — AI agent teams, built around you";
+    document.title = "Automican — AI employees. Human ambition.";
   }, []);
   useEffect(() => {
     if (!status) return;
     const timer = setTimeout(() => setStatus(""), 6000);
     return () => clearTimeout(timer);
   }, [status]);
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const close = (e) => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+        menuRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [mobileOpen]);
   return (
     <>
       <a className="skip-link" href="#main">
@@ -491,25 +605,27 @@ export default function App() {
         <div className="container header-inner">
           <Brand />
           <nav
-            aria-label="Main navigation"
             className={`main-nav ${mobileOpen ? "is-open" : ""}`}
+            aria-label="Main navigation"
           >
-            <a href="#swarm" onClick={() => setMobileOpen(false)}>
-              The swarm
-            </a>
-            <a href="#teams" onClick={() => setMobileOpen(false)}>
-              Agent teams
-            </a>
-            <a href="#how-it-works" onClick={() => setMobileOpen(false)}>
-              How it works
-            </a>
-            <a href="#custom" onClick={() => setMobileOpen(false)}>
-              Custom builds <span className="nav-new">FOR YOU</span>
-            </a>
+            {[
+              ["AI employees", "#employees"],
+              ["Custom builds", "#custom"],
+              ["Frameworks", "#frameworks"],
+              ["How it works", "#how-it-works"],
+            ].map(([label, url]) => (
+              <a key={url} href={url} onClick={() => setMobileOpen(false)}>
+                {label}
+              </a>
+            ))}
           </nav>
           <div className="header-actions">
-            <Button emphasis="outline" intent="neutral" onClick={() => hire()}>
-              Let’s talk <ArrowUpRight size={16} />
+            <Button
+              emphasis="outline"
+              intent="neutral"
+              onClick={() => openInquiry()}
+            >
+              Let’s build <ArrowUpRight size={17} />
             </Button>
             <button
               ref={menuRef}
@@ -518,230 +634,164 @@ export default function App() {
               aria-expanded={mobileOpen}
               onClick={() => setMobileOpen((v) => !v)}
             >
-              <Menu size={22} />
+              <Menu size={24} />
             </button>
           </div>
         </div>
       </header>
       <main id="main">
-        <section className="hero container" id="swarm">
+        <section className="hero container">
           <div className="hero-copy">
-            <div className="hero-eyebrow">
-              <span className="little-star" aria-hidden="true">
-                ✳
-              </span>{" "}
-              HUMAN AMBITION. AGENT EXECUTION.
-            </div>
+            <span className="hero-eyebrow">
+              <span aria-hidden="true">✦</span> INTELLIGENCE, WITH PERSONALITY.
+            </span>
             <h1>
-              Big ambitions.
+              Your next hire.
               <br />
-              Meet your
-              <br />
-              <span>AI workforce.</span>
+              <span>Beyond ordinary.</span>
             </h1>
             <p>
-              A swarm of specialist AI agents, working as one.
-              <br className="desktop-break" /> Hire a team or build your
-              own—around your people,
-              <br className="desktop-break" /> your workflows, and what comes
-              next.
+              Meet AI employees built for real work. From balancing the books to
+              growing your brand, find your specialist—or build one that’s
+              entirely yours.
             </p>
             <div className="hero-actions">
-              <a className="button button-solid intent-primary" href="#teams">
-                Find your agent team <ArrowUpRight size={18} />
+              <a
+                href="#employees"
+                className="button button-solid intent-primary"
+              >
+                Meet your AI employees <ArrowUpRight size={19} />
               </a>
-              <button className="text-button" onClick={() => hire()}>
-                Build something custom <ArrowRight size={17} />
+              <button
+                className="hero-secondary text-button"
+                onClick={() => openInquiry()}
+              >
+                Build a custom agent <ArrowRight size={19} />
               </button>
             </div>
-            <div className="hero-note">
-              <span className="tiny-stack" aria-hidden="true">
-                <Compass />
-                <Code2 />
-                <TrendingUp />
+            <div className="hero-trust">
+              <span>
+                <ShieldCheck size={16} aria-hidden="true" />
+                Your goals. Your direction.
               </span>
-              <span>Specialized minds. One shared mission.</span>
+              <span className="trust-divider" />
+              <span>Made for the way Bangladesh works.</span>
             </div>
           </div>
-          <SwarmMap onTeam={openDetail} />
+          <HeroConstellation />
         </section>
         <section
-          className="audience-strip container"
-          aria-label="Who we build for"
+          className="audience-section container"
+          aria-label="Companies Organizations Institutions or Personal"
         >
-          <span className="eyebrow">
-            A NEW WAY TO WORK.
-            <br />
-            <strong>FOR EVERY KIND OF ORGANIZATION.</strong>
-          </span>
-          <div>
-            <span>
-              <Building2 aria-hidden="true" size={20} />
-              Companies
-            </span>
-            <span>
-              <Workflow aria-hidden="true" size={20} />
-              Offices
-            </span>
-            <span>
-              <Users aria-hidden="true" size={20} />
-              Organizations
-            </span>
-            <span>
-              <Landmark aria-hidden="true" size={20} />
-              Institutions
-            </span>
-          </div>
-        </section>
-        <section className="teams-section container section-space" id="teams">
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow">THE RIGHT MINDS FOR THE MISSION</span>
-              <h2>
-                Don’t just add AI.
-                <br />
-                Add a team.
-              </h2>
-            </div>
-            <p>
-              From the first spark to the next stage of growth,
-              <br className="desktop-break" /> find the specialists who move
-              your work forward.
-            </p>
-          </div>
-          <div className="teams-grid">
-            {DEPARTMENTS.map((d) => (
-              <article className={`team-card tone-${d.toLowerCase()}`} key={d}>
-                <div className="team-card-top">
-                  <DepartmentIcon department={d} size={22} />
+          <span className="eyebrow">ONE PLATFORM. YOUR KIND OF WORK.</span>
+          <div className="audience-list">
+            {AUDIENCES.map((a, i) => {
+              const Icon = AUDIENCE_ICONS[i];
+              return (
+                <React.Fragment key={a}>
+                  {i === 3 && <span className="audience-or">or</span>}
                   <span>
-                    {AGENTS.filter((a) => a.department === d).length} ROLES
+                    <Icon size={22} aria-hidden="true" />
+                    {a}
                   </span>
-                </div>
-                <span className="team-category">{TEAM_COPY[d].category}</span>
-                <h3>
-                  {d}
-                  <span> team</span>
-                </h3>
-                <p>{TEAM_COPY[d].description}</p>
-                <div className="team-tags">
-                  {TEAM_COPY[d].tags.map((t) => (
-                    <span key={t}>{t}</span>
-                  ))}
-                </div>
-                <button className="team-explore" onClick={() => openDetail(d)}>
-                  Explore team <ArrowUpRight size={19} aria-hidden="true" />
-                </button>
-              </article>
-            ))}
+                </React.Fragment>
+              );
+            })}
           </div>
-          <Registry onAgent={openAgent} />
         </section>
+        <EmployeeExplorer onDetails={openDetails} onInquiry={openInquiry} />
         <section className="custom-section container section-space" id="custom">
-          <div className="custom-visual" aria-hidden="true">
-            <div className="custom-grid">
-              <span className="custom-chip chip-a">
-                <Building2 size={22} />
-                Your organization
-              </span>
-              <div className="custom-core">
-                <Network size={41} strokeWidth={1.4} />
-              </div>
-              <span className="custom-chip chip-b">
-                <Workflow size={17} />
-                Your workflow
-              </span>
-              <span className="custom-chip chip-c">
-                <ShieldCheck size={17} />
-                Your direction
-              </span>
-              <span className="custom-chip chip-d">
-                <Sparkles size={17} />
-                Your agent team
-              </span>
-              <svg viewBox="0 0 450 360" fill="none">
-                <path d="M225 90V175M225 175L80 210M225 175L345 255M225 175L130 310" />
-              </svg>
-              <span className="custom-caption">
-                BUILT AROUND YOU, BY DESIGN.
-              </span>
-            </div>
-          </div>
           <div className="custom-copy">
-            <span className="eyebrow">
-              <span className="status-dot" /> YOUR WORK. YOUR WAY.
-            </span>
+            <span className="eyebrow">A ROLE IS ONLY THE BEGINNING.</span>
             <h2>
-              Your organization
+              Built around your work.
               <br />
-              is one of a kind.
-              <br />
-              <span>Your AI should be, too.</span>
+              <span>Not the other way around.</span>
             </h2>
             <p>
-              Off-the-shelf doesn’t fit every ambition. Let’s shape an agent
-              swarm around the way your organization actually works.
+              Your approvals, your language, your way of getting things done. We
+              turn your everyday workflows into a brief for an AI employee—or a
+              coordinated swarm.
             </p>
             <ul>
               <li>
-                <Check size={16} aria-hidden="true" />A team shaped around your
-                goals and processes
+                <Check size={18} aria-hidden="true" />
+                Bangla and English workflows scoped to your team
               </li>
               <li>
-                <Check size={16} aria-hidden="true" />
-                Tools and integrations scoped to your environment
+                <Check size={18} aria-hidden="true" />
+                Your tools, preferred framework, and knowledge
               </li>
               <li>
-                <Check size={16} aria-hidden="true" />
-                Human direction, from planning to rollout
+                <Check size={18} aria-hidden="true" />
+                Human checkpoints for decisions that matter
               </li>
             </ul>
-            <Button onClick={() => hire()}>
-              Request a custom build <ArrowUpRight size={18} />
+            <Button onClick={() => openInquiry()}>
+              Build something that fits <ArrowUpRight size={18} />
             </Button>
           </div>
+          <div className="custom-blueprint">
+            <span className="blueprint-label">
+              YOUR AI EMPLOYEE / CUSTOM CONFIGURATION
+            </span>
+            <div className="blueprint-orbit">
+              <Avatar agent={AGENTS[11]} />
+              <span className="blueprint-node node-language">
+                বাংলা + English
+              </span>
+              <span className="blueprint-node node-tools">
+                <Workflow size={16} aria-hidden="true" />
+                Your tools
+              </span>
+              <span className="blueprint-node node-human">
+                <ShieldCheck size={16} aria-hidden="true" />
+                Human direction
+              </span>
+            </div>
+            <div className="blueprint-caption">
+              <Sparkles size={18} aria-hidden="true" />
+              <span>A little more you. A lot more possible.</span>
+            </div>
+          </div>
         </section>
+        <FrameworkSection onInquiry={openInquiry} />
         <section
           className="process-section container section-space"
           id="how-it-works"
         >
           <div className="section-heading">
             <div>
-              <span className="eyebrow">FROM WHAT IF TO WHAT’S NEXT</span>
+              <span className="eyebrow">
+                FROM NICE TO MEET YOU, TO LET’S GET TO WORK.
+              </span>
               <h2>
-                Your goal.
+                A better way to work.
                 <br />
-                Our starting point.
+                <span>Starts with a conversation.</span>
               </h2>
             </div>
-            <p>
-              You bring the ambition. Together, we define
-              <br className="desktop-break" /> the team, the workflow, and the
-              way forward.
-            </p>
           </div>
           <div className="process-grid">
             {[
               {
-                title: "Tell us the mission.",
-                text: "Share the work you want to improve, the bottleneck you want to remove, or the idea you want to bring to life.",
-                icon: "01",
+                title: "Choose your teammate.",
+                text: "Find the role you need, or tell us about a workflow that deserves its own kind of intelligence.",
               },
               {
-                title: "Shape your swarm.",
-                text: "Explore a ready-defined team or work with us to scope the roles, tools, and human checkpoints you need.",
-                icon: "02",
+                title: "Make it your own.",
+                text: "Agree on the responsibilities, language, framework, tools, and human approvals. Start with a focused scope.",
               },
               {
-                title: "Build the way forward.",
-                text: "Agree on the scope and rollout plan. Start with a focused workflow, then decide what comes next.",
-                icon: "03",
+                title: "Build. Review. Grow.",
+                text: "Validate the workflow with your team before rollout. Expand when the work and the results make sense.",
               },
-            ].map((p) => (
-              <article key={p.icon}>
+            ].map((p, i) => (
+              <article key={p.title}>
                 <span className="process-number">
-                  {p.icon}
-                  <ArrowRight size={19} aria-hidden="true" />
+                  0{i + 1}
+                  <ArrowRight size={20} aria-hidden="true" />
                 </span>
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
@@ -751,18 +801,18 @@ export default function App() {
         </section>
         <section className="faq-section container section-space" id="questions">
           <div>
-            <span className="eyebrow">A LITTLE MORE CLARITY</span>
+            <span className="eyebrow">CURIOUS? GOOD.</span>
             <h2>
-              Good questions.
+              The human
               <br />
-              Straight answers.
+              <span>questions.</span>
             </h2>
             <p>
-              Still thinking it through?
+              Big ideas deserve clear answers.
               <br />
-              <button className="text-button" onClick={() => hire()}>
-                Let’s start a conversation <ArrowUpRight size={16} />
-              </button>
+              <a href="mailto:automicanhq@gmail.com" className="text-button">
+                Talk to the humans <ArrowUpRight size={17} />
+              </a>
             </p>
           </div>
           <div className="faq-list">
@@ -770,7 +820,7 @@ export default function App() {
               <details key={q}>
                 <summary>
                   {q}
-                  <Plus className="faq-plus" size={19} aria-hidden="true" />
+                  <Plus size={20} aria-hidden="true" />
                 </summary>
                 <p>{a}</p>
               </details>
@@ -778,102 +828,117 @@ export default function App() {
           </div>
         </section>
         <section className="final-cta container">
-          <div className="cta-mark" aria-hidden="true">
-            <Network size={37} strokeWidth={1.3} />
-          </div>
+          <span className="cta-emblem">
+            <Orbit size={45} strokeWidth={1.3} aria-hidden="true" />
+          </span>
           <div>
-            <span className="eyebrow">YOUR NEXT CHAPTER IS A TEAM EFFORT.</span>
-            <h2>Put your ambition in motion.</h2>
+            <span className="eyebrow">
+              HUMAN AMBITION. EXTRAORDINARY COMPANY.
+            </span>
+            <h2>Your next chapter has a new teammate.</h2>
           </div>
-          <Button onClick={() => hire()}>
-            Build your agent team <ArrowUpRight size={19} />
+          <Button onClick={() => openInquiry()}>
+            Let’s build it <ArrowUpRight size={19} />
           </Button>
         </section>
       </main>
-      <footer className="container site-footer">
+      <footer className="site-footer container">
         <div className="footer-top">
           <div>
-            <Brand footer />
-            <p>Independent minds. Collective possibility.</p>
+            <Brand />
+            <p>AI employees. Human ambition.</p>
           </div>
-          <a href="#teams">
-            Explore teams <ArrowUpRight size={14} />
-          </a>
-          <a href="#custom">
-            Custom builds <ArrowUpRight size={14} />
-          </a>
-          <a href="#questions">
-            Questions <ArrowUpRight size={14} />
-          </a>
-          <a className="back-top" href="mailto:automicanhq@gmail.com">
-            Get in touch <ArrowUpRight size={14} />
-          </a>
+          <nav aria-label="Footer navigation">
+            <a href="#employees">Meet the employees</a>
+            <a href="#frameworks">Frameworks & platforms</a>
+            <a href="mailto:automicanhq@gmail.com">
+              Get in touch <ArrowUpRight size={15} />
+            </a>
+          </nav>
         </div>
         <div className="footer-bottom">
           <span>
             © {new Date().getFullYear()} Automican. All rights reserved.
           </span>
-          <span>Human ambition. Agent execution.</span>
+          <span>
+            Built for companies, organizations, institutions, and personal
+            ambition.
+          </span>
         </div>
       </footer>
       <Dialog
         open={!!detail}
         onClose={() => setDetail(null)}
-        title={`${detail || ""} team`}
-        description={detail ? TEAM_COPY[detail].headline : ""}
+        title={detail?.designation || "AI employee"}
+        description={detail?.scene || ""}
       >
-        {detail && <TeamDetail team={detail} onHire={hire} />}
-      </Dialog>
-      <Dialog
-        open={!!agent}
-        onClose={() => setAgent(null)}
-        title={agent?.designation || "Agent role"}
-        description={
-          agent
-            ? `Part of the ${agent.department === "System" ? "coordination layer" : `${agent.department} team`}.`
-            : ""
-        }
-      >
-        {agent && (
-          <div className="agent-detail">
-            <DepartmentIcon department={agent.department} size={26} />
-            <h3>What this role brings</h3>
-            <p>{agent.role}</p>
-            <p className="muted">
-              Discuss this role on its own or as part of a coordinated team.
-              Capabilities and tools are agreed during scoping.
+        {detail && (
+          <div className={`employee-detail accent-${detail.accent}`}>
+            <div className="detail-avatar-row">
+              <Avatar agent={detail} />
+              <div>
+                <span className="eyebrow">YOUR NEW TEAMMATE</span>
+                <p>{detail.greeting}</p>
+              </div>
+            </div>
+            <h3>How I can help</h3>
+            <ul>
+              {detail.tasks.map((t) => (
+                <li key={t}>
+                  <Check size={18} aria-hidden="true" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <p className="detail-note">
+              We agree on tools, permissions, and review checkpoints before
+              rollout.
             </p>
-            <Button
-              onClick={() =>
-                hire(
-                  agent.department === "System"
-                    ? "Custom team"
-                    : agent.department,
-                  agent.designation,
-                )
-              }
-            >
-              Discuss this role <ArrowUpRight size={17} />
-            </Button>
+            <div className="dialog-actions">
+              <Button
+                emphasis="outline"
+                intent="neutral"
+                onClick={() =>
+                  openInquiry({
+                    intent: "Build",
+                    role: detail.designation,
+                    audience:
+                      detail.category === "Personal" ? "Personal" : undefined,
+                  })
+                }
+              >
+                Build this role <Plus size={17} />
+              </Button>
+              <Button
+                onClick={() =>
+                  openInquiry({
+                    intent: "Hire",
+                    role: detail.designation,
+                    audience:
+                      detail.category === "Personal" ? "Personal" : undefined,
+                  })
+                }
+              >
+                Hire this employee <ArrowUpRight size={17} />
+              </Button>
+            </div>
           </div>
         )}
       </Dialog>
       <Inquiry
         open={inquiryOpen}
-        initialTeam={initialTeam}
+        initialContext={context}
         onClose={() => {
           setInquiryOpen(false);
-          requestAnimationFrame(() => {
-            if (
+          requestAnimationFrame(
+            () =>
               inquiryTrigger.current?.isConnected &&
-              !inquiryTrigger.current.closest("dialog")
-            )
-              inquiryTrigger.current.focus();
-          });
+              inquiryTrigger.current.focus(),
+          );
         }}
         onStatus={setStatus}
       />
-      <Status message={status} />
+      <Status message={status} modalOpen={inquiryOpen || !!detail} />
     </>
   );
 }

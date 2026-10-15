@@ -1,34 +1,47 @@
 {
-  "passed": 7,
+  "passed": 10,
   "checks": [
     {
-      "name": "Landing content, local fonts, scrollbar, links and desktop accessibility",
+      "name": "New employee catalog, audience wording, readable type, local assets and accessibility",
       "passed": true
     },
     {
-      "name": "Team details: keyboard focus, native dialog trap, Escape and restoration",
+      "name": "Avatar hover introduction, raised hand, hoverable content and keyboard dismissal",
       "passed": true
     },
     {
-      "name": "Role explorer: search, IME, clear, no-results, native filter, paging and history",
+      "name": "Employee search, IME composition, no-results, filters, history, load more and focus",
       "passed": true
     },
     {
-      "name": "Detail-to-inquiry handoff, validation, label association and draft preservation",
+      "name": "Role details, native modal keyboard trap, Hire/Build handoff and focus restoration",
       "passed": true
     },
     {
-      "name": "Inquiry email recipient, encoded values, file download and failure/retry",
+      "name": "Framework catalog, official source links, category filters and Build context",
       "passed": true
     },
     {
-      "name": "Phone: reflow, topology separation, menu Escape, FAQ and modal access",
+      "name": "Personal inquiry: optional organization, validation, labels, retained draft and review",
       "passed": true
     },
     {
-      "name": "Offline local workflow, reduced motion and invalid URL recovery",
+      "name": "Email draft and download retain intent, role, audience and framework; error/retry works",
+      "passed": true
+    },
+    {
+      "name": "Company inquiry still requires an organization; clear draft is confirmed",
+      "passed": true
+    },
+    {
+      "name": "Responsive reflow from 320px to desktop and zoom-equivalent width",
+      "passed": true
+    },
+    {
+      "name": "Touch greetings, popup geometry, reduced motion, offline and forced colors",
       "passed": true
     }
   ],
-  "runtimeErrors": []
+  "runtimeErrors": [],
+  "screenReader": "Not available; keyboard and automated accessibility checks performed."
 }

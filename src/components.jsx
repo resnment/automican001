@@ -1,28 +1,46 @@
+import { createPortal } from "react-dom";
 import React, { useEffect, useId, useRef, useState } from "react";
 import {
-  ArrowUpRight,
   ArrowRight,
   X,
-  Check,
   Download,
   Mail,
   LoaderCircle,
   Network,
-  Compass,
-  Code2,
-  TrendingUp,
-  ChartNoAxesCombined,
+  Calculator,
+  Headset,
+  MessageCircle,
+  Megaphone,
+  Handshake,
+  Users,
+  ShoppingBag,
+  Package,
+  GraduationCap,
+  BookOpen,
+  CalendarDays,
+  PenTool,
   CheckCircle2,
 } from "lucide-react";
-import { AGENTS, DEPARTMENTS, DEPARTMENT_INFO } from "./data";
+import { AGENTS, FRAMEWORKS, AUDIENCES } from "./data";
 
-export const ICONS = {
-  System: Network,
-  Origin: Compass,
-  Development: Code2,
-  Growth: TrendingUp,
-  Revenue: ChartNoAxesCombined,
+export const ROLE_ICONS = {
+  social: MessageCircle,
+  accounts: Calculator,
+  support: Headset,
+  marketing: Megaphone,
+  sales: Handshake,
+  hr: Users,
+  commerce: ShoppingBag,
+  inventory: Package,
+  admissions: GraduationCap,
+  academic: BookOpen,
+  personal: CalendarDays,
+  content: PenTool,
 };
+export function RoleIcon({ icon, size = 20, ...props }) {
+  const Icon = ROLE_ICONS[icon] || Network;
+  return <Icon size={size} aria-hidden="true" {...props} />;
+}
 export function Button({
   children,
   emphasis = "solid",
@@ -41,14 +59,6 @@ export function Button({
     >
       {children}
     </button>
-  );
-}
-export function DepartmentIcon({ department, size = 19 }) {
-  const Icon = ICONS[department] || Network;
-  return (
-    <span className={`department-icon tone-${department.toLowerCase()}`}>
-      <Icon size={size} aria-hidden="true" />
-    </span>
   );
 }
 export function Dialog({
@@ -152,8 +162,16 @@ export function Field({ id, label, hint, error, children }) {
     </div>
   );
 }
-export function Status({ message }) {
-  return (
+export function Status({ message, modalOpen = false }) {
+  const [target, setTarget] = useState(document.body);
+  useEffect(() => {
+    setTarget(
+      modalOpen
+        ? document.querySelector("dialog[open]") || document.body
+        : document.body,
+    );
+  }, [modalOpen]);
+  const content = (
     <div
       className={`toast ${message ? "visible" : ""}`}
       role="status"
@@ -167,44 +185,19 @@ export function Status({ message }) {
       )}
     </div>
   );
-}
-export function TeamDetail({ team, onHire }) {
-  const roles = AGENTS.filter((a) => a.department === team);
-  return (
-    <>
-      <div className="team-detail-intro">
-        <DepartmentIcon department={team} size={27} />
-        <p>{DEPARTMENT_INFO[team].description}</p>
-      </div>
-      <h3 className="small-heading">Your team, role by role</h3>
-      <div className="detail-roles">
-        {roles.map((a) => (
-          <div key={a.designation}>
-            <Check size={16} aria-hidden="true" />
-            <div>
-              <strong>{a.designation}</strong>
-              <p>{a.role}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="dialog-actions">
-        <span>Final scope is agreed with you.</span>
-        <Button onClick={() => onHire(team)}>
-          Discuss this team <ArrowUpRight size={17} />
-        </Button>
-      </div>
-    </>
-  );
+  return createPortal(content, target);
 }
 const EMPTY_FORM = {
   name: "",
   organization: "",
   email: "",
   objective: "",
-  team: "Custom team",
+  team: "Custom AI employee",
+  intent: "Hire",
+  audience: "Companies",
+  framework: "Recommend a framework",
 };
-export function Inquiry({ initialTeam, open, onClose, onStatus }) {
+export function Inquiry({ initialContext, open, onClose, onStatus }) {
   const [values, setValues] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [review, setReview] = useState(false);
@@ -213,14 +206,22 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
   const [working, setWorking] = useState(false);
   const locked = useRef(false);
   const reviewRef = useRef(null);
-  const dirty = Object.keys(EMPTY_FORM).some((k) => k !== "team" && values[k]);
+  const dirty = ["name", "organization", "email", "objective"].some(
+    (k) => values[k],
+  );
   useEffect(() => {
-    if (open && initialTeam) {
-      setValues((v) => ({ ...v, team: initialTeam }));
+    if (open && initialContext) {
+      setValues((v) => ({
+        ...v,
+        team: initialContext.role || "Custom AI employee",
+        intent: initialContext.intent || "Build",
+        audience: initialContext.audience || v.audience,
+        framework: initialContext.framework || "Recommend a framework",
+      }));
       setReview(false);
       setDiscarding(false);
     }
-  }, [open, initialTeam]);
+  }, [open, initialContext]);
   useEffect(() => {
     if (!dirty) return;
     const warn = (e) => {
@@ -244,7 +245,7 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
     const next = {};
     if (values.name.trim().length < 2)
       next.name = "Enter your name (at least 2 characters).";
-    if (!values.organization.trim())
+    if (values.audience !== "Personal" && !values.organization.trim())
       next.organization = "Enter your organization’s name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim()))
       next.email = "Enter a valid email, such as name@company.com.";
@@ -264,7 +265,7 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
     setDownloadError("");
     let url;
     try {
-      const brief = `AUTOMICAN — INQUIRY BRIEF\n\nInterest: ${values.team}\nName: ${values.name.trim()}\nOrganization: ${values.organization.trim()}\nEmail: ${values.email.trim()}\n\nWhat we want to achieve\n${values.objective.trim()}\n\nSend this inquiry to automicanhq@gmail.com. Downloading does not send your inquiry.\n`;
+      const brief = `AUTOMICAN — INQUIRY BRIEF\n\nRequest: ${values.intent}\nRole: ${values.team}\nFor: ${values.audience}\nFramework: ${values.framework}\nName: ${values.name.trim()}\nOrganization: ${values.organization.trim() || "Personal use"}\nEmail: ${values.email.trim()}\n\nWhat we want to achieve\n${values.objective.trim()}\n\nSend this inquiry to automicanhq@gmail.com. Downloading does not send your inquiry.\n`;
       url = URL.createObjectURL(
         new Blob([brief], { type: "text/plain;charset=utf-8" }),
       );
@@ -285,8 +286,8 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
       setWorking(false);
     }
   };
-  const emailBody = `Hi Automican,\n\nI’m interested in: ${values.team}\n\nName: ${values.name.trim()}\nOrganization: ${values.organization.trim()}\nEmail: ${values.email.trim()}\n\nWhat we want to achieve:\n${values.objective.trim()}\n\nPlease get in touch to discuss scope and next steps.`;
-  const mailto = `mailto:automicanhq@gmail.com?subject=${encodeURIComponent(`Agent inquiry — ${values.team}`)}&body=${encodeURIComponent(emailBody)}`;
+  const emailBody = `Hi Automican,\n\nI would like to: ${values.intent}\nRole: ${values.team}\nFor: ${values.audience}\nPreferred framework: ${values.framework}\n\nName: ${values.name.trim()}\nOrganization: ${values.organization.trim() || "Personal use"}\nEmail: ${values.email.trim()}\n\nWhat we want to achieve:\n${values.objective.trim()}\n\nPlease get in touch to discuss scope and next steps.`;
+  const mailto = `mailto:automicanhq@gmail.com?subject=${encodeURIComponent(`${values.intent} inquiry — ${values.team}`)}&body=${encodeURIComponent(emailBody)}`;
   const controls = (name, extra = {}) => ({
     id: `inquiry-${name}`,
     name,
@@ -303,12 +304,14 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
       title={
         review
           ? "Your next chapter starts here."
-          : "Let’s build your advantage."
+          : values.intent === "Hire"
+            ? "Meet your next AI employee."
+            : "Build something of your own."
       }
       description={
         review
           ? "Review your brief, then open a prefilled email to Automican."
-          : "Tell us what you want to achieve. We’ll help shape the right agent team."
+          : "A role, a workflow, or a whole team. Tell us what great work looks like for you."
       }
       className="inquiry-dialog"
     >
@@ -323,8 +326,18 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
               <dd>{values.team}</dd>
             </div>
             <div>
+              <dt>Request</dt>
+              <dd>
+                {values.intent} · {values.audience}
+              </dd>
+            </div>
+            <div>
+              <dt>Framework</dt>
+              <dd>{values.framework}</dd>
+            </div>
+            <div>
               <dt>Organization</dt>
-              <dd>{values.organization}</dd>
+              <dd>{values.organization || "Personal use"}</dd>
             </div>
             <div>
               <dt>Your name</dt>
@@ -397,30 +410,57 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
               inquiry by email.
             </p>
           </div>
-          <Field id="inquiry-team" label="I’m interested in">
-            <select {...controls("team")}>
-              <option>Custom team</option>
-              {DEPARTMENTS.map((d) => (
-                <option key={d}>{d} team</option>
-              ))}
-              <optgroup label="Individual specialist roles">
-                {AGENTS.map((a) => (
-                  <option key={a.designation}>{a.designation}</option>
+          <div className="form-columns">
+            <Field id="inquiry-intent" label="I want to">
+              <select {...controls("intent")}>
+                <option value="Hire">Hire an AI employee</option>
+                <option value="Build">Build a custom agent</option>
+              </select>
+            </Field>
+            <Field id="inquiry-audience" label="This is for">
+              <select {...controls("audience")}>
+                {AUDIENCES.map((a) => (
+                  <option key={a}>{a}</option>
                 ))}
-              </optgroup>
+              </select>
+            </Field>
+          </div>
+          <Field id="inquiry-team" label="Employee role">
+            <select {...controls("team")}>
+              <option>Custom AI employee</option>
+              {AGENTS.map((a) => (
+                <option key={a.id}>{a.designation}</option>
+              ))}
+            </select>
+          </Field>
+          <Field
+            id="inquiry-framework"
+            label="Preferred framework or platform"
+            hint="Not sure? We’ll help choose the right fit."
+          >
+            <select {...controls("framework")}>
+              <option>Recommend a framework</option>
+              {FRAMEWORKS.map((f) => (
+                <option key={f.name}>{f.name}</option>
+              ))}
+              <option>Other / my existing setup</option>
             </select>
           </Field>
           <div className="form-columns">
             <Field id="inquiry-name" label="Your name" error={errors.name}>
               <input
                 {...controls("name", { autoComplete: "name", maxLength: 100 })}
-                placeholder="Alex Morgan"
+                placeholder="Your full name"
                 required
               />
             </Field>
             <Field
               id="inquiry-organization"
-              label="Organization"
+              label={
+                values.audience === "Personal"
+                  ? "Organization (optional)"
+                  : "Organization"
+              }
               error={errors.organization}
             >
               <input
@@ -428,33 +468,37 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
                   autoComplete: "organization",
                   maxLength: 160,
                 })}
-                placeholder="Company or institution"
-                required
+                placeholder={
+                  values.audience === "Personal"
+                    ? "Optional for personal use"
+                    : "Company, organization, or institution"
+                }
+                required={values.audience !== "Personal"}
               />
             </Field>
           </div>
-          <Field id="inquiry-email" label="Work email" error={errors.email}>
+          <Field id="inquiry-email" label="Email address" error={errors.email}>
             <input
               {...controls("email", {
                 type: "email",
                 autoComplete: "email",
                 maxLength: 254,
               })}
-              placeholder="you@organization.com"
+              placeholder="you@example.com"
               required
             />
           </Field>
           <Field
             id="inquiry-objective"
-            label="What would you like your agents to do?"
+            label="What work would you like help with?"
             error={errors.objective}
-            hint="Share your workflow, your goals, or the work you want to take off your team’s plate."
+            hint="Tell us about your workflow, tools, and the outcome you have in mind."
           >
             <textarea
               className="resize-none"
               {...controls("objective", { maxLength: 2000, rows: 4 })}
               style={{ resize: "none" }}
-              placeholder="We’re looking for a team that can…"
+              placeholder="I’d like an AI employee who can…"
               required
               onInput={(e) => {
                 e.target.style.height = "auto";
@@ -463,7 +507,7 @@ export function Inquiry({ initialTeam, open, onClose, onStatus }) {
             />
           </Field>
           <div className="dialog-actions">
-            <span>No commitment. Start with your goal.</span>
+            <span>No payment or commitment at this stage.</span>
             <Button type="submit">
               Review inquiry <ArrowRight size={17} />
             </Button>

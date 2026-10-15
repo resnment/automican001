@@ -14,13 +14,13 @@ for (const [, name, value] of colors.matchAll(
   checked++;
 }
 for (const [token, value] of [
-  ["radius-control", "0.5rem"],
-  ["radius-panel", "0.875rem"],
-  ["space-section", "1.75rem"],
+  ["radius-control", "0.75rem"],
+  ["radius-panel", "1.5rem"],
+  ["space-section", "2rem"],
   ["space-page", "2.5rem"],
 ]) {
   const actual = css.match(new RegExp(`--${token}:\\s*([^;]+)`))?.[1].trim();
   assert.equal(parseFloat(actual), parseFloat(value), `Token drift: ${token}`);
 }
-assert.equal(checked, 13);
+assert.equal(checked, 12);
 console.log(`Design tokens match: ${checked} colors, 4 geometry tokens.`);

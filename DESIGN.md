@@ -1,21 +1,20 @@
 ---
 version: alpha
 name: Automican
-description: A calm operations workspace for a coordinated AI workforce.
+description: A premium sci-fi studio for AI employees and human ambition.
 colors:
-  background: "#101213"
-  sidebar: "#0c0e0f"
-  surface: "#171a1c"
-  elevated: "#1d2123"
-  border: "#2b3033"
-  primary: "#77e0c7"
-  text: "#f1f3f3"
-  muted: "#a0a8ad"
-  danger: "#ff9d9d"
-  origin: "#b6a0ed"
-  development: "#8bb9f6"
-  growth: "#e9bd83"
-  revenue: "#77e0c7"
+  background: "#090e1a"
+  surface: "#101a2b"
+  elevated: "#19273e"
+  border: "#33435a"
+  primary: "#e5c79b"
+  text: "#f4f3ed"
+  muted: "#b4becd"
+  danger: "#ffb2b8"
+  cyan: "#9adce8"
+  lilac: "#bcb5f2"
+  rose: "#e8b8c4"
+  on-primary: "#201b16"
 typography:
   display:
     fontFamily: '"Manrope", "Segoe UI", sans-serif'
@@ -24,63 +23,73 @@ typography:
   mono:
     fontFamily: '"IBM Plex Mono", ui-monospace, monospace'
 rounded:
-  DEFAULT: "0.5rem"
-  lg: "0.875rem"
+  DEFAULT: "0.75rem"
+  lg: "1.5rem"
 spacing:
-  section: "1.75rem"
+  section: "2rem"
   page: "2.5rem"
 components:
   button:
-    rounded: "0.5rem"
+    rounded: "0.75rem"
   panel:
-    rounded: "0.875rem"
+    rounded: "1.5rem"
   dialog:
-    rounded: "0.875rem"
+    rounded: "1.5rem"
 ---
 
 # Automican design system
 
 ## Overview
 
-Automican is a public website for organizations looking to hire specialist AI agents or commission a custom swarm. Source: user’s stated hiring/custom-build brief, 2026-10-15; supplied business email automicanhq@gmail.com; existing 30-role dataset in src/data.js. No backend, pricing, customer results, or integration guarantees are supplied. The live reference at https://www.automican.com/ is client rendered and exposed no additional crawlable content. The redesign preserves the dark/cyan brand from the existing source while making the hiring journey concrete.
+Automican is a public AI employee and custom-agent studio for Bangladesh-facing Companies, Organizations, Institutions, or Personal needs. The owner's 2026-10-15 request explicitly replaces the prior 30-role software-department taxonomy, removes Offices from the audience line, adds Personal, requests larger typography, classy sci-fi colors, illustrated employees with waving introductions, Hire/Build actions, and a researched framework/interoperability section. This is an authorized durable identity change; the prior design is preserved in before screenshots and Git history.
 
-North star: the visible structure of collective intelligence, presented like a specialist technology studio. The signature is a precise topology connecting four departments through a central orchestrator. The diagram is illustrative, not live telemetry. Expressiveness belongs there; team details and inquiry forms remain familiar. Avoid animated gradient text, fake execution feeds, invented customer logos or metrics, and dense dashboard chrome on the public site.
+North star: a refined sci-fi character studio, where luminous metal AI colleagues have personality while the website behaves like a credible professional service. The signature is the illustrated employee constellation and each role's raised-hand introduction. Layer ink-blue surfaces, pearl typography, champagne actions, and restrained glacial-cyan/lilac highlights. Avoid neon terminal cosplay, dashboard telemetry, invented statistics, generic purple gradients, or universal compatibility claims.
 
-English is the product language; no specific geographic market is established. The audience is offices, companies, organizations, and institutions. Register: marketing with a bounded team explorer and inquiry form. No Japan-market evidence. Desktop and mobile retain every conversion path. No account, payments, destructive operation, deployment, or external send is introduced. The email draft uses the exact recipient supplied by the owner.
+The register is public marketing plus a bounded role explorer and inquiry form. English is the current UI language; Bangla and English are offered as workflow-scoping requirements, with a representative Bangla label in the custom-build visual. A Bangla-localized website is not implied. Bangladesh scope is explicit in the user brief. Role research is directional evidence, not a labor-market ranking; sources are in `.design/research.md`. No Japan-market gate is triggered.
 
-Runtime CSS in `src/index.css` is canonical (Model B); this file mirrors its semantic tokens. Mapping: each colors key maps to `--color-{key}`; typography display/sans/mono map to `--font-display`, `--font-sans`, `--font-mono`; rounded DEFAULT/lg map to `--radius-control`/`--radius-panel`; spacing section/page map to `--space-section`/`--space-page`. Components consume these variables directly. `scripts/verify-design.mjs` checks drift. Tailwind has no independent semantic theme adapter.
+The owner-provided inquiry address remains automicanhq@gmail.com. Hire and Build prepare inquiries; no automatic payment, deployment, email transmission, or live agent execution is claimed.
+
+Runtime CSS in `src/index.css` is canonical (Model B). `colors.{key}` maps to `--color-{key}`; `typography.display/sans/mono` maps to `--font-display/sans/mono`; `rounded.DEFAULT/lg` maps to `--radius-control/panel`; `spacing.section/page` maps to `--space-section/page`. Shared consumers use these CSS variables. `scripts/verify-design.mjs` verifies documented values; there is no independent semantic Tailwind adapter.
 
 ## Colors
 
-Charcoal tonal surfaces and subtle borders establish hierarchy. Mint is the safe primary action and coordination accent. Department colors distinguish groups, always with text labels. Errors use danger plus explanatory text. Muted text stays readable on surfaces. Only a dark theme is supported; forced colors use platform colors.
+Ink background and navy surfaces create a coherent night palette. Gradients are quiet tonal lighting on surfaces and a champagne-to-pearl display treatment, not loud full-spectrum decoration. Champagne is the action role; cyan is connection/focus; lilac and rose distinguish employee accents. Color always has a role name or icon equivalent. Pale text and muted text retain contrast on layered surfaces. Danger accompanies inline error text. Only dark mode is supported; forced colors preserve system-operable controls and native scrollbar contrast. Avatar illustration retains its own contrast in forced colors because it is decorative and named by adjacent text.
 
 ## Typography
 
-Manrope provides restrained geometric display headings; DM Sans handles controls and prose; IBM Plex Mono labels technical metadata. Fonts are bundled locally with fixed fallback stacks. Prose uses sentence case and comfortable line height. Data uses tabular figures. No oversized marketing typography inside tables or dialogs.
+Locally bundled Manrope expresses character through restrained geometric headings; DM Sans supplies readable prose and controls; IBM Plex Mono labels technical metadata. Main body is 16px, hero copy 17–18px, section descriptions 15–16px, employee summaries 14–16px, controls 14–16px. Secondary metadata and utility labels never drop below 11px. Form controls stay 16px on every viewport. Headings wrap naturally, letter spacing relaxes on phones, and important descriptions never truncate. The English UI uses the platform's Bangla-capable fallback when a Bangla example is present.
 
 ## Layout
 
-Content width up to 1280px with generous horizontal gutters; desktop hero is a 1.05:1 split. Four team cards become two below 950px and one below 480px; hero stacks below 760px. Mobile navigation is an in-flow-height-neutral disclosure under the header, with no claim to modal semantics. Large section spacing supports a clear marketing narrative; the role registry expands only on demand. Document owns vertical scrolling. The registry owns horizontal scrolling only. Dialogs have bounded internal scrolling. No global fixed-height clipping.
+Content max width 1280px with generous gutters. Desktop hero is an editorial split beside a staged three-employee constellation. Employee gallery is three columns above 950px, two to 520px, then one column; it renders six roles initially with explicit Load more to the complete twelve-role collection. Phone layouts recompose rather than shrink. Framework library is two columns to 760px, then a single column. Filters wrap, and native selects accept the platform popup.
+
+Document owns vertical scrolling; dialogs have bounded internal scrolling. No table-specific shell or forced viewport clipping exists. Search and filters persist in URL state; registry sorting/pagination from the old implementation is intentionally retired with the old table. Hover popups overlay without changing layout and remain usable on keyboard and touch. Avatar and illustration geometry is reserved before interaction; no external image or font fetch is required.
 
 ## Elevation & Depth
 
-Panels are flat, with tonal separation and 1px borders. Only dialogs have a shadow and backdrop. Dot-grid texture belongs exclusively to the network map. No glass cards or gratuitous gradients.
+Subtle radial illumination, thin cool borders, inset highlights and restrained shadows create depth. Employee faces and materials use local SVG gradients; glows are limited to the character stage. Speech bubbles and modal dialogs carry functional elevation. Avoid ambient continuous motion or decorative live-status indicators.
 
 ## Shapes
 
-8px controls and 14px panels; pills are reserved for status and counts. Icons have 1.7px strokes. Thin topology connections visually contrast with substantial node anchors.
+12px controls, 24px major panels, 16–20px intermediate groups. Pills are reserved for compact filter choices and avatar introduction affordances. Metallic avatars share a head/body construction, role-specific accessories and badges, and four accent families. A raised arm communicates greeting; essential role and Hire/Build actions remain visible below the avatar.
 
 ## Components
 
-Shared Button supports solid, outline, ghost emphasis and primary, neutral, danger intent. Controls show hover, pressed, focus-visible, disabled, and busy treatments; busy content reserves geometry. Lucide icons use 16–20px sizes and decorative icons are hidden from assistive technology.
+Shared `Button`, `Dialog`, `Field`, `RoleIcon`, `Inquiry`, and `Status` in `src/components.jsx` own repeated behavior. `Avatar` and `AvatarGreeting` in `src/Avatar.jsx` own all character materials, hand motion and introduction behavior. No screen-local dialog or greeting implementation exists. `EmployeeCard` uses the same Hire/Build intent as role details and framework inquiries.
 
-Team cards, topology nodes and role details share department colors, icons and vocabulary. Native table semantics, bounded pagination and explicit detail actions preserve utility. Native selects intentionally accept platform popup geometry. Search has an authored clear control. Shared Field owns labels, help and invalid feedback. Shared native-dialog wrapper owns modality, Escape, focus restoration and scrolling. A shared status region announces local operations; persistent errors stay inline.
+Default, hover, focus-visible, pressed, disabled and busy controls remain distinguishable. Primary buttons are champagne; outline actions stay cool neutral. Success/status uses one polite live region; critical errors remain inline. Busy controls preserve identity and geometry. Native selects intentionally accept browser/OS-owned popup geometry.
 
-Motion is limited to subtle 150ms control feedback and a busy spinner. The network is still; control feedback is the only routine motion. Reduced motion removes transitions and spinner animation. Product copy names actual behavior: explore a team, review an inquiry, open an email draft, download a brief. Opening a draft never claims an inquiry was sent.
+Avatar introduction opens on mouse hover, keyboard focus or tap. Escape and the named close button dismiss it; pointer/focus departure closes transient content. The speech bubble is hoverable and does not replace persistent role copy or actions. The hand raises with a 550ms transform and a bounded three-cycle wrist wave. Reduced motion keeps the static raised pose while suppressing all interpolation and animation. No automatic audio or pretend live chat is introduced.
+
+Framework cards link to official sources and preserve the chosen framework in Build inquiries. A2A is described as agent-to-agent; MCP is described as agent-to-tool/data. ChatGPT dots, OpenClaw and Hermes Agent are distinguished as platforms. Neither listing nor a protocol implies tested compatibility with every other option.
+
+Lucide icons use consistent stroke weights. Decorative icons/SVGs are hidden from assistive technology; semantic text names every employee, action and protocol. Inquiry review and mailto/download recovery remain from the earlier implementation, extended with intent, role, audience and framework context.
 
 ## Do's and Don'ts
 
-- Do preserve text labels alongside department and status colors.
-- Do use the shared controls and semantic tokens across every view.
-- Don't imply that a team has been hired or an email sent before a real engagement or send occurs.
-- Don't add billing, permissions or destructive operations without maintained business contracts.
+- Do keep the character delightful and the business workflow predictable.
+- Do use 16px body copy and at least 11px utility labels; recompose instead of shrinking.
+- Do preserve every Hire/Build selection through review, email draft and downloaded brief.
+- Don't reintroduce the retired departments, arbitrary fake telemetry, or Offices in the audience line.
+- Don't promise automatic payments, tax filing, recruiting decisions, academic decisions, publishing or messaging; scope human approval and actual integrations.
+- Don't present a researched catalog as an exhaustive framework inventory or imply an official partnership.

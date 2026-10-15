@@ -2,12 +2,6 @@
   "findings": [
     {
       "severity": "warning",
-      "path": "colors.sidebar",
-      "message": "'sidebar' is defined but never referenced by any component.",
-      "rule": "orphaned-tokens"
-    },
-    {
-      "severity": "warning",
       "path": "colors.elevated",
       "message": "'elevated' is defined but never referenced by any component.",
       "rule": "orphaned-tokens"
@@ -38,37 +32,31 @@
     },
     {
       "severity": "warning",
-      "path": "colors.origin",
-      "message": "'origin' is defined but never referenced by any component.",
+      "path": "colors.cyan",
+      "message": "'cyan' is defined but never referenced by any component.",
       "rule": "orphaned-tokens"
     },
     {
       "severity": "warning",
-      "path": "colors.development",
-      "message": "'development' is defined but never referenced by any component.",
+      "path": "colors.lilac",
+      "message": "'lilac' is defined but never referenced by any component.",
       "rule": "orphaned-tokens"
     },
     {
       "severity": "warning",
-      "path": "colors.growth",
-      "message": "'growth' is defined but never referenced by any component.",
-      "rule": "orphaned-tokens"
-    },
-    {
-      "severity": "warning",
-      "path": "colors.revenue",
-      "message": "'revenue' is defined but never referenced by any component.",
+      "path": "colors.rose",
+      "message": "'rose' is defined but never referenced by any component.",
       "rule": "orphaned-tokens"
     },
     {
       "severity": "info",
-      "message": "Design system defines 13 colors, 3 typography scales, 2 rounding levels, 2 spacing tokens, 3 components.",
+      "message": "Design system defines 12 colors, 3 typography scales, 2 rounding levels, 2 spacing tokens, 3 components.",
       "rule": "token-summary"
     }
   ],
   "summary": {
     "errors": 0,
-    "warnings": 10,
+    "warnings": 8,
     "infos": 1
   }
 }
